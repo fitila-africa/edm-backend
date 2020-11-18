@@ -18,7 +18,7 @@ def populate_ecosystem():
 def populate_organization():
     import csv
 
-    with open('organization/file.csv', mode='r', encoding="utf-8") as csv_file:
+    with open('organization/file.csv', mode='r', encoding='latin1') as csv_file:
         csv_reader = csv.DictReader(csv_file)
         # line_count = 0
         for row in csv_reader:
