@@ -1,0 +1,6 @@
+migrations
+*.pyc
+*.sqlite3
+Pipfile
+*.vscode
+settings.py
