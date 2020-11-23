@@ -13,11 +13,11 @@ class EcosystemSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = EcoSystem
-        fields = ('name', 'sub_ecosystem', 'organization', 'date_created', 'date_updated')
+        fields = ('id', 'name', 'sub_ecosystem', 'organization', 'date_created', 'date_updated')
 
 class SubecosystemSerializer(serializers.ModelSerializer):
     organization = serializers.ReadOnlyField()
 
     class Meta:
         model = SubEcosystem
-        fields = ('name', 'ecosystem', 'organization', 'date_created', 'date_updated')
+        fields = ('id', 'name', 'ecosystem', 'organization', 'date_created', 'date_updated')
