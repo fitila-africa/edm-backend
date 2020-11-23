@@ -9,6 +9,8 @@ urlpatterns = [
    path('organizations/', views.organizations),
    path('organizations/<int:pk>', views.organization_detail),
    path('ecosystem/', views.ecosystem),
-   path('ecosystem/<int:pk>', views.ecosystem_detail)
+   path('ecosystem/<int:pk>', views.ecosystem_detail),
+   path('sub_ecosystem/', views.sub_ecosystem),
+   path('sub_ecosystem/<int:pk>', views.sub_ecosystem_detail)
 
 ]
