@@ -2,7 +2,6 @@ from rest_framework import serializers
 from .models import Organization, EcoSystem, SubEcosystem
 
 class OrganizationSerializer(serializers.ModelSerializer):
-    ecosystem = serializers.SlugRelatedField(slug_field='name', queryset=EcoSystem.objects.all())
 
     class Meta:
         model = Organization
