@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Organization, EcoSystem
+from .models import Organization, EcoSystem, SubEcosystem
 
 class OrganizationSerializer(serializers.ModelSerializer):
     ecosystem = serializers.SlugRelatedField(slug_field='name', queryset=EcoSystem.objects.all())
@@ -19,5 +19,5 @@ class SubecosystemSerializer(serializers.ModelSerializer):
     organization = serializers.ReadOnlyField()
 
     class Meta:
-        model = EcoSystem
+        model = SubEcosystem
         fields = ('name', 'ecosystem', 'organization', 'date_created', 'date_updated')
