@@ -1,6 +1,4 @@
-from typing import Tuple
 from django.db import models
-from django.utils import tree
 from account.models import User
 
 class EcoSystem(models.Model):
@@ -10,29 +8,34 @@ class EcoSystem(models.Model):
 
     @property
     def organization(self):
-        organization = Organization.objects.filter(ecosystem= self.pk)
+        organization = self.organizations.all()
 
         data = map(lambda object: {"id":object.id,"name":object.name,}, organization)
         return list(data)
+
+    @property
+    def sub_ecosystem(self):
+        sub = self.ecosystems.all()
+
+        return list(map(lambda object: {"id":object.id,"name":object.name,}, sub))
 
     def __str__(self):
         return self.name
 
 class SubEcosystem(models.Model):
     name = models.CharField(max_length=250)
-    ecosystem = models.ForeignKey(EcoSystem, on_delete=models.CASCADE)
+    ecosystem = models.ForeignKey(EcoSystem, on_delete=models.CASCADE, related_name='ecosystems')
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
 
-    @property
-    def organization(self):
-        organization = Organization.objects.filter(ecosystem= self.pk)
-
-        data = map(lambda object: {"id":object.id,"name":object.name,}, organization)
-        return list(data)
-
     def __str__(self):
         return self.name
+
+    @property
+    def organization(self):
+        organization = self.sub_ecosystem.all()
+        data = map(lambda object: {"id":object.id,"name":object.name,}, organization)
+        return list(data)
 
     
 
