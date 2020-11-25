@@ -34,7 +34,7 @@ class SubEcosystem(models.Model):
     @property
     def organization(self):
         organization = self.sub_ecosystem.all()
-        data = map(lambda object: {"id":object.id,"name":object.name,}, organization)
+        data = map(lambda object: {"id":object.id,"name":object.name}, organization)
         return list(data)
 
     
@@ -42,16 +42,24 @@ class SubEcosystem(models.Model):
 class Organization(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='orgaizations', null=True)
     name = models.CharField(max_length=350)
+    company_logo = models.ImageField(null=True)
+    company_logo_url = models.CharField(max_length=200, null=True)
+    num_of_employees = models.CharField(max_length=100, null=True)
     state = models.CharField(max_length=150)
     # local_gov = models.CharField(max_length=200)
     address = models.CharField(max_length=250)
     ecosystem = models.ForeignKey(EcoSystem, on_delete=models.CASCADE, related_name='organizations', blank =True, null=True)
     sub_ecosystem = models.ForeignKey(SubEcosystem, on_delete=models.CASCADE, related_name='sub_ecosystem', blank =True, null=True)
+    sub_ecosystem_sub_class = models.CharField(max_length=200, null=True)
     sector = models.CharField(max_length=200, blank =True, null=True)
     business_level = models.CharField(max_length=200, blank =True, null=True)
+    funding = models.CharField(max_length=200, null=True)
+    company_valuation = models.CharField(max_length=200, null=True)
     is_startup = models.CharField(max_length=20, blank =True, null=True)
     num_supported_business = models.CharField(max_length=20, blank =True, null=True)
-    ceo_name = models.CharField(max_length=200)
+    ceo_name = models.CharField(max_length=200, null=True)
+    ceo_image = models.ImageField(null=True)
+    ceo_image_url = models.CharField(max_length=200, null=True)
     website = models.CharField(max_length=350, blank =True, null=True)
     email = models.EmailField()
     phone = models.CharField(max_length=50)
@@ -63,7 +71,7 @@ class Organization(models.Model):
     url_2 =models.CharField(max_length=350, blank =True, null=True)
     url_3 =models.CharField(max_length=350, blank =True, null=True)
     cac_doc = models.CharField(max_length=350, blank =True, null=True)
-    gov_id = models.CharField(max_length=350, blank =True, null=True)
+    # gov_id = models.CharField(max_length=350, blank =True, null=True)
     is_entrepreneur = models.BooleanField(default=False)
     is_ecosystem = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
