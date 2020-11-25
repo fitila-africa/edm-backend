@@ -3,6 +3,7 @@ from account.models import User
 
 class EcoSystem(models.Model):
     name = models.CharField(max_length=250, unique=True)
+    description = models.CharField(max_length=250, null=True)
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
 
@@ -24,6 +25,7 @@ class EcoSystem(models.Model):
 
 class SubEcosystem(models.Model):
     name = models.CharField(max_length=250)
+    description = models.CharField(max_length=250, null=True)
     ecosystem = models.ForeignKey(EcoSystem, on_delete=models.CASCADE, related_name='ecosystems')
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
