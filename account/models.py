@@ -12,6 +12,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     email         = models.EmailField(_('email'), unique=True)
     role         = models.CharField(_('role'), max_length = 20)
     password      = models.CharField(_('password'), max_length=300)
+    profile_pics = models.ImageField(_('profile picture'), null=True)
+    profile_pics_url = models.CharField(_('profile picture url'), max_length = 300, null=True)
     is_active     = models.BooleanField(_('active'), default=True)
     date_joined   = models.DateTimeField(_('date joined'), auto_now_add=True)
     

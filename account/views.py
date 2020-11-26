@@ -12,6 +12,8 @@ from rest_framework_jwt.utils import jwt_payload_handler, jwt
 from django.conf import settings
 from django.contrib.auth.signals import user_logged_in
 
+import cloudinary
+import cloudinary.uploader
 
 @api_view(['POST'])
 # @authentication_classes([JSONWebTokenAuthentication])
@@ -23,7 +25,14 @@ def add_user(request):
         serializer = UserSerializer(data = request.data)
         
         if serializer.is_valid():
+
+            #upload profile picture
+            profile_pics = serializer.validated_data['profile_pics'] #get the image file from the request 
+            img1 = cloudinary.uploader.upload(profile_pics, folder = 'fitila/profile pictures/') #upload the image to cloudinary
+            serializer.validated_data['profile_pics'] = "" #delete the image file
+            serializer.validated_data['profile_pics_url'] = img1['secure_url'] #save the image url 
             
+            #hash password
             serializer.validated_data['password'] = make_password(serializer.validated_data['password']) #hash the given password
             user = User.objects.create(**serializer.validated_data)
             
