@@ -15,6 +15,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     profile_pics = models.ImageField(_('profile picture'), null=True)
     profile_pics_url = models.CharField(_('profile picture url'), max_length = 300, null=True)
     is_active     = models.BooleanField(_('active'), default=True)
+    is_staff     = models.BooleanField(_('staff'), default=False)
+    is_superuser    = models.BooleanField(_('superuser'), default=False)
     date_joined   = models.DateTimeField(_('date joined'), auto_now_add=True)
     
     objects = UserManager()
