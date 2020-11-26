@@ -8,5 +8,5 @@ admin.site.register(EcoSystem)
 
 @admin.register(Organization)
 class OrganizationAdmin(admin.ModelAdmin):
-    list_display = ['name']
+    list_display = ['name', 'is_entrepreneur', 'is_ecosystem', 'is_active']
     list_editable = ['is_entrepreneur', 'is_ecosystem', 'is_active']
