@@ -7,6 +7,8 @@ from rest_framework import status
 from .models import EcoSystem, Organization, SubEcosystem
 from .serializers import EcosystemSerializer, OrganizationSerializer, SubecosystemSerializer
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
+import cloudinary
+import cloudinary.uploader
 
 # Create your views here.
 
@@ -33,9 +35,23 @@ def organizations(request):
     elif request.method == 'POST':
         
         serializer = OrganizationSerializer(data = request.data)
-        
+
         if serializer.is_valid():
-        
+
+            #upload the company's logo
+            company_logo = serializer.validated_data['company_logo'] #get the image file from the request 
+            img1 = cloudinary.uploader.upload(company_logo, folder = 'fitila/company_logo/') #upload the image to cloudinary
+            serializer.validated_data['company_logo'] = "" #delete the image file
+            serializer.validated_data['company_logo_url'] = img1['secure_url'] #save the image url 
+
+            # upload the ceo's image
+            ceo_image = serializer.validated_data['ceo_image'] #get the image file from the request 
+            img2 = cloudinary.uploader.upload(ceo_image, folder = 'fitila/ceo_image/') #upload the image to cloudinary
+            serializer.validated_data['ceo_image'] = "" #delete the image file
+            serializer.validated_data['ceo_image_url'] = img2['secure_url'] #save the image url 
+
+
+            
             organization = Organization.objects.create(**serializer.validated_data)
             organization.save()
 
