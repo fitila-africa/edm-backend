@@ -27,10 +27,10 @@ def add_user(request):
         if serializer.is_valid():
 
             #upload profile picture
-            profile_pics = serializer.validated_data['profile_pics'] #get the image file from the request 
-            img1 = cloudinary.uploader.upload(profile_pics, folder = 'fitila/profile pictures/') #upload the image to cloudinary
-            serializer.validated_data['profile_pics'] = "" #delete the image file
-            serializer.validated_data['profile_pics_url'] = img1['secure_url'] #save the image url 
+            # profile_pics = serializer.validated_data['profile_pics'] #get the image file from the request 
+            # img1 = cloudinary.uploader.upload(profile_pics, folder = 'fitila/profile pictures/') #upload the image to cloudinary
+            # serializer.validated_data['profile_pics'] = "" #delete the image file
+            # serializer.validated_data['profile_pics_url'] = img1['secure_url'] #save the image url 
             
             #hash password
             serializer.validated_data['password'] = make_password(serializer.validated_data['password']) #hash the given password
