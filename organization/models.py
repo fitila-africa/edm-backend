@@ -65,6 +65,8 @@ class Organization(models.Model):
     website = models.CharField(max_length=350, blank =True, null=True)
     email = models.EmailField()
     phone = models.CharField(max_length=50)
+    description = models.TextField(null=True, blank=True)
+    head_quarters = models.CharField(max_length=350, blank =True, null=True)
     facebook = models.CharField(max_length=350, blank =True, null=True)
     instagram =models.CharField(max_length=350, blank =True, null=True)
     linkedin =models.CharField(max_length=350, blank =True, null=True)
