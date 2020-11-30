@@ -178,6 +178,6 @@ def user_login(request):
         else:
             data = {
                 'status'  : False,
-                'error': 'Please provide a email and a password'
+                'error': 'Please provide a valid email and a password'
                 }
             return Response(data, status=status.HTTP_401_UNAUTHORIZED)

@@ -13,9 +13,9 @@ import cloudinary.uploader
 # Create your views here.
 
 
-@api_view(['GET', 'POST'])
-@authentication_classes([JSONWebTokenAuthentication])
-@permission_classes([IsAuthenticated])
+@api_view(['GET'])
+# @authentication_classes([JSONWebTokenAuthentication])
+# @permission_classes([IsAuthenticated])
 def organizations(request):
     
     if request.method == 'GET':
@@ -32,7 +32,12 @@ def organizations(request):
         return Response(data, status=status.HTTP_200_OK)
 
 
-    elif request.method == 'POST':
+@api_view(['POST'])
+@authentication_classes([JSONWebTokenAuthentication])
+@permission_classes([IsAuthenticated])
+def add_organization(request):
+
+    if request.method == 'POST':
         
         serializer = OrganizationSerializer(data = request.data)
 
