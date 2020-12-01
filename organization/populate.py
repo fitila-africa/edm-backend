@@ -25,7 +25,7 @@ def populate_organization():
             row['ecosystem'] = EcoSystem.objects.get(name = str(row['ecosystem']))
             # print(row['ecosystem'])
             # print(row)
-            Organization.objects.create(**row)
+            Organization.objects.create(**row, is_active=True)
             print(row['name'], 'Done')
 
 
