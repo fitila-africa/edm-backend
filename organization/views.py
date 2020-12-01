@@ -112,6 +112,18 @@ def organization_detail(request, pk):
 
         if serializer.is_valid():
 
+            if 'ceo_image' in serializer.validated_data.keys():
+                ceo_image = serializer.validated_data['ceo_image'] #get the image file from the request 
+                img2 = cloudinary.uploader.upload(ceo_image, folder = 'fitila/ceo_image/') #upload the image to cloudinary
+                serializer.validated_data['ceo_image'] = "" #delete the image file
+                serializer.validated_data['ceo_image_url'] = img2['secure_url'] #save the image url
+
+            if 'company_logo' in serializer.validated_data.keys():
+                company_logo = serializer.validated_data['company_logo'] #get the image file from the request 
+                img1 = cloudinary.uploader.upload(company_logo, folder = 'fitila/company_logo/') #upload the image to cloudinary
+                serializer.validated_data['company_logo'] = "" #delete the image file
+                serializer.validated_data['company_logo_url'] = img1['secure_url'] #save the image url 
+
 
             serializer.save()
 
