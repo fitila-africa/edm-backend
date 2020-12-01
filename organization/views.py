@@ -147,8 +147,8 @@ def organization_detail(request, pk):
 
 
 @api_view(['GET', 'POST'])
-@authentication_classes([JSONWebTokenAuthentication])
-@permission_classes([IsAuthenticated])
+# @authentication_classes([JSONWebTokenAuthentication])
+# @permission_classes([IsAuthenticated])
 def ecosystem(request):
     
     if request.method == 'GET':
@@ -260,8 +260,8 @@ def ecosystem_detail(request, pk):
 
 
 @api_view(['GET', 'POST'])
-@authentication_classes([JSONWebTokenAuthentication])
-@permission_classes([IsAuthenticated])
+# @authentication_classes([JSONWebTokenAuthentication])
+# @permission_classes([IsAuthenticated])
 def sub_ecosystem(request):
     
     if request.method == 'GET':
