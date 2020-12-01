@@ -18,13 +18,13 @@ def populate_ecosystem():
 def populate_organization():
     import csv
 
-    with open('organization/file.csv', mode='r', encoding='latin1') as csv_file:
+    with open('organization/new_data.csv', mode='r', encoding='UTF-8') as csv_file:
         csv_reader = csv.DictReader(csv_file)
         # line_count = 0
         for row in csv_reader:
             row['ecosystem'] = EcoSystem.objects.get(name = str(row['ecosystem']))
             # print(row['ecosystem'])
-
+            # print(row)
             Organization.objects.create(**row)
             print(row['name'], 'Done')
 
