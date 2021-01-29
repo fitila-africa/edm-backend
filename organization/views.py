@@ -1,6 +1,5 @@
 from django.shortcuts import render
 from rest_framework.decorators import api_view, authentication_classes, permission_classes 
-from rest_framework.authentication import TokenAuthentication, BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
@@ -14,8 +13,8 @@ import cloudinary.uploader
 
 
 @api_view(['GET'])
-# @authentication_classes([JSONWebTokenAuthentication])
-# @permission_classes([IsAuthenticated])
+@authentication_classes([JSONWebTokenAuthentication])
+@permission_classes([IsAuthenticated])
 def organizations(request):
     
     if request.method == 'GET':
@@ -43,18 +42,35 @@ def add_organization(request):
 
         if serializer.is_valid():
 
+            if serializer.validated_data['company_logo'] is not None:
             #upload the company's logo
-            company_logo = serializer.validated_data['company_logo'] #get the image file from the request 
-            img1 = cloudinary.uploader.upload(company_logo, folder = 'fitila/company_logo/') #upload the image to cloudinary
-            serializer.validated_data['company_logo'] = "" #delete the image file
-            serializer.validated_data['company_logo_url'] = img1['secure_url'] #save the image url 
+                company_logo = serializer.validated_data['company_logo'] #get the image file from the request 
+                img1 = cloudinary.uploader.upload(company_logo, folder = 'fitila/company_logo/') #upload the image to cloudinary
+                serializer.validated_data['company_logo'] = "" #delete the image file
+                serializer.validated_data['company_logo_url'] = img1['secure_url'] #save the image url 
+            else: 
+                data = {
+                'status'  : False,
+                'message' : "Unsuccessful",
+                'error' : ["Company logo is required"],
+            }
 
+                return Response(data, status = status.HTTP_400_BAD_REQUEST)
+
+            if serializer.validated_data['ceo_image'] is not None:
             # upload the ceo's image
-            ceo_image = serializer.validated_data['ceo_image'] #get the image file from the request 
-            img2 = cloudinary.uploader.upload(ceo_image, folder = 'fitila/ceo_image/') #upload the image to cloudinary
-            serializer.validated_data['ceo_image'] = "" #delete the image file
-            serializer.validated_data['ceo_image_url'] = img2['secure_url'] #save the image url 
+                ceo_image = serializer.validated_data['ceo_image'] #get the image file from the request 
+                img2 = cloudinary.uploader.upload(ceo_image, folder = 'fitila/ceo_image/') #upload the image to cloudinary
+                serializer.validated_data['ceo_image'] = "" #delete the image file
+                serializer.validated_data['ceo_image_url'] = img2['secure_url'] #save the image url 
+            else: 
+                data = {
+                'status'  : False,
+                'message' : "Unsuccessful",
+                'error' : ["CEO's Image is required"],
+            }
 
+                return Response(data, status = status.HTTP_400_BAD_REQUEST)
 
             
             organization = Organization.objects.create(**serializer.validated_data)

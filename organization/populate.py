@@ -16,20 +16,31 @@ def populate_ecosystem():
         print('{} Done'.format(i))
 
 def populate_organization():
+    a = Organization.objects.all()
+    a.delete()
+    print("Cleared former data")
+    print("=================\nWorking on new data\n")
     import csv
 
-    with open('organization/new_data.csv', mode='r', encoding='UTF-8') as csv_file:
+    with open('organization/updated_data.csv', mode='r', encoding='UTF-8') as csv_file:
         csv_reader = csv.DictReader(csv_file)
         # line_count = 0
         for row in csv_reader:
-            row['ecosystem'] = EcoSystem.objects.get(name = str(row['ecosystem']))
+            row['ecosystem'], created = EcoSystem.objects.get_or_create(name = str(row['ecosystem']))
+            print(row['sub_ecosystem'])
+            row['sub_ecosystem'], created = SubEcosystem.objects.get_or_create(name = str(row['sub_ecosystem']), ecosystem=row['ecosystem'])
             # print(row['ecosystem'])
             # print(row)
-            Organization.objects.create(**row, is_active=True)
+            Organization.objects.create(**row, is_active=True )
             print(row['name'], 'Done')
 
 
 def populate_sub():
+    a = SubEcosystem.objects.all()
+    a.delete()
+    print("Cleared former data")
+    print("=================\nWorking on new data\n")
+
     data  = {
         'Business support': [{ 'name':'Business Advisory'},{ 'name':'Mentoring' },  {'name':'Incubators'},{'name':'Accelerators'},{'name':'Churches/Mosques'}],
 

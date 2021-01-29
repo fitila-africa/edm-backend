@@ -1,10 +1,10 @@
 from organization.models import Organization
 from django.contrib import admin
-from .models import EcoSystem, Organization
+from .models import EcoSystem, Organization,SubEcosystem
 
 # Register your models here.
 admin.site.register(EcoSystem)
-
+admin.site.register(SubEcosystem)
 
 @admin.register(Organization)
 class OrganizationAdmin(admin.ModelAdmin):
