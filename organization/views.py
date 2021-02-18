@@ -13,8 +13,8 @@ import cloudinary.uploader
 
 
 @api_view(['GET'])
-@authentication_classes([JSONWebTokenAuthentication])
-@permission_classes([IsAuthenticated])
+# @authentication_classes([JSONWebTokenAuthentication])
+# @permission_classes([IsAuthenticated])
 def organizations(request):
     
     if request.method == 'GET':
@@ -32,8 +32,8 @@ def organizations(request):
 
 
 @api_view(['POST'])
-@authentication_classes([JSONWebTokenAuthentication])
-@permission_classes([IsAuthenticated])
+# @authentication_classes([JSONWebTokenAuthentication])
+# @permission_classes([IsAuthenticated])
 def add_organization(request):
 
     if request.method == 'POST':
@@ -97,8 +97,8 @@ def add_organization(request):
 
 
 @api_view(['GET', 'PUT', 'DELETE']) 
-@authentication_classes([JSONWebTokenAuthentication])
-@permission_classes([IsAuthenticated])
+# @authentication_classes([JSONWebTokenAuthentication])
+# @permission_classes([IsAuthenticated])
 def organization_detail(request, pk):
     try:
         organization =  Organization.objects.get(pk = pk, is_active =True)
@@ -223,8 +223,8 @@ def ecosystem(request):
 
 
 @api_view(['GET', 'PUT', 'DELETE']) 
-@authentication_classes([JSONWebTokenAuthentication])
-@permission_classes([IsAuthenticated])
+# @authentication_classes([JSONWebTokenAuthentication])
+# @permission_classes([IsAuthenticated])
 def ecosystem_detail(request, pk):
     try:
         eco =  EcoSystem.objects.get(pk = pk)
@@ -335,8 +335,8 @@ def sub_ecosystem(request):
 
 
 @api_view(['GET', 'PUT', 'DELETE']) 
-@authentication_classes([JSONWebTokenAuthentication])
-@permission_classes([IsAuthenticated])
+# @authentication_classes([JSONWebTokenAuthentication])
+# @permission_classes([IsAuthenticated])
 def sub_ecosystem_detail(request, pk):
     try:
         eco =  SubEcosystem.objects.get(pk = pk)
