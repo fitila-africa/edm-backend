@@ -7,18 +7,22 @@ class EcoSystem(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
 
-    @property
-    def organization(self):
-        organization = self.organizations.all()
-
-        data = map(lambda object: {"id":object.id,"name":object.name,}, organization)
-        return list(data)
+    
 
     @property
     def sub_ecosystem(self):
         sub = self.ecosystems.all()
 
-        return list(map(lambda object: {"id":object.id,"name":object.name,}, sub))
+        return list(map(lambda object: {
+            "id":object.id,
+            "name":object.name, 
+            "organizations": list(map(lambda x: {"id":x.id,
+                                                "name":x.name, 
+                                                "company_logo_url": x.company_logo_url, "ceo_image_url":x.ceo_image_url, "state":x.state, 
+                                                "sector":x.sector,
+                                                "employee" :x.num_of_employees, "funding":x.funding
+                                                },object.organizations.all()))
+            }, sub))
 
     def __str__(self):
         return self.name
@@ -51,7 +55,7 @@ class Organization(models.Model):
     # local_gov = models.CharField(max_length=200)
     address = models.CharField(max_length=250)
     ecosystem = models.ForeignKey(EcoSystem, on_delete=models.CASCADE, related_name='organizations', blank =True, null=True)
-    sub_ecosystem = models.ForeignKey(SubEcosystem, on_delete=models.CASCADE, related_name='sub_ecosystem', blank =True, null=True)
+    sub_ecosystem = models.ForeignKey(SubEcosystem, on_delete=models.CASCADE, related_name='organizations', blank =True, null=True)
     sub_ecosystem_sub_class = models.CharField(max_length=200, null=True)
     sector = models.CharField(max_length=200, blank =True, null=True)
     business_level = models.CharField(max_length=200, blank =True, null=True)

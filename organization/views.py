@@ -397,3 +397,26 @@ def sub_ecosystem_detail(request, pk):
             }
 
         return Response(data, status = status.HTTP_204_NO_CONTENT) 
+
+
+@api_view(['GET'])
+def state(request):
+
+    state = Organization.objects.values('state').distinct()
+
+
+    print([state[i]['state'] for i in range(len(state))])
+    filtered = {state[i]['state']: list(map(lambda x: {"id":x.id,
+                                                "name":x.name, 
+                                                "company_logo_url": x.company_logo_url, "ceo_image_url":x.ceo_image_url, "state":x.state, 
+                                                "sector":x.sector,
+                                                "employee" :x.num_of_employees, "funding":x.funding
+                                                },Organization.objects.filter(state = state[i]['state']))) for i in range(len(state))}
+
+    data = {
+                'status'  : True,
+                'message' : "Successful",
+                'data' : filtered
+            }
+
+    return Response(data, status = status.HTTP_200_OK)
