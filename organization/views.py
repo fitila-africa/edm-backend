@@ -4,10 +4,12 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 from .models import EcoSystem, Organization, SubEcosystem
-from .serializers import EcosystemSerializer, OrganizationSerializer, SubecosystemSerializer
+from .serializers import EcosystemSerializer, FileUploadSerializer, OrganizationSerializer, SubecosystemSerializer
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 import cloudinary
 import cloudinary.uploader
+import csv
+import io
 
 # Create your views here.
 
@@ -420,3 +422,53 @@ def state(request):
             }
 
     return Response(data, status = status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+def upload_csv(request):
+
+    
+    if request.method == 'POST':
+        
+        serializer = FileUploadSerializer(data = request.data)
+        
+
+        if serializer.is_valid():
+            
+            file = serializer.validated_data['file']
+            
+            decoded_file = file.read().decode()
+            
+            io_string = io.StringIO(decoded_file)
+            
+            reader = csv.DictReader(io_string)
+            
+            for row in reader:
+                print(row)
+                row['ecosystem'] = EcoSystem.objects.get(name = str(row['ecosystem']))
+                row['sub_ecosystem'] = SubEcosystem.objects.get(name = str(row['sub_ecosystem']), ecosystem=row['ecosystem'])
+                
+                Organization.objects.create(**row, is_active=True )
+
+            
+            
+            data = {
+                'status'  : True,
+                'message' : "File upload successful",
+                
+            }
+
+            return Response(data, status = status.HTTP_200_OK)
+
+        else:
+            data = {
+                'status'  : False,
+                'message' : "Unsuccessful",
+                'errors'  : serializer.errors
+                
+            }
+
+            return Response(data, status = status.HTTP_400_BAD_REQUEST)
+
+
+        

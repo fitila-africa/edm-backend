@@ -20,3 +20,10 @@ class SubecosystemSerializer(serializers.ModelSerializer):
     class Meta:
         model = SubEcosystem
         fields = ('id', 'name', 'ecosystem', 'organization', 'date_created', 'date_updated')
+
+
+class FileUploadSerializer(serializers.Serializer):
+    file = serializers.FileField()
+
+    class Meta:
+        fields = ('file',)

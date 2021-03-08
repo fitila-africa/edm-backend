@@ -56,6 +56,47 @@ def add_user(request):
             return Response(data, status = status.HTTP_400_BAD_REQUEST)
 
 
+
+@api_view(['POST'])
+# @authentication_classes([JSONWebTokenAuthentication])
+# @permission_classes([IsAuthenticated])
+def add_admin(request):
+
+    if request.method == 'POST':
+        
+        serializer = UserSerializer(data = request.data)
+        
+        if serializer.is_valid():
+
+            
+            
+            #hash password
+            serializer.validated_data['password'] = make_password(serializer.validated_data['password']) #hash the given password
+            user = User.objects.create(**serializer.validated_data, is_admin=True, is_staff=True)
+            
+
+            serializer = UserSerializer(user)
+            data = {
+                'status'  : True,
+                'message' : "Successful",
+                'data' : serializer.data,
+            }
+
+            return Response(data, status = status.HTTP_201_CREATED)
+
+        else:
+            data = {
+                'status'  : False,
+                'message' : "Unsuccessful",
+                'error' : serializer.errors,
+            }
+
+            return Response(data, status = status.HTTP_400_BAD_REQUEST)
+
+
+
+
+
 @api_view(['GET'])
 @authentication_classes([JSONWebTokenAuthentication])
 @permission_classes([IsAuthenticated])
@@ -160,6 +201,7 @@ def user_login(request):
                 user_detail['last_name'] = user.last_name
                 user_detail['email'] = user.email
                 user_detail['role'] = user.role
+                user_detail['is_admin'] = user.is_admin
                 user_detail['token'] = token
                 user_logged_in.send(sender=user.__class__,
                                     request=request, user=user)

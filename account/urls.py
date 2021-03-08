@@ -8,6 +8,7 @@ urlpatterns = [
 
     #users
     path('add_user/', views.add_user),
+    path('add_admin/', views.add_admin),
     path('get_user/', views.get_user),
     path('user/<int:pk>', views.user_detail),
 
