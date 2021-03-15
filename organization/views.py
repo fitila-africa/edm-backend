@@ -555,21 +555,31 @@ def upload_csv(request):
             reader = csv.DictReader(io_string)
             
             for row in reader:
-                print(row)
+                success = False
+                row['sector'] = Sector.objects.get(name = str(row['sector']))
                 row['ecosystem'] = EcoSystem.objects.get(name = str(row['ecosystem']))
                 row['sub_ecosystem'] = SubEcosystem.objects.get(name = str(row['sub_ecosystem']), ecosystem=row['ecosystem'])
                 
                 Organization.objects.create(**row, is_active=True )
 
-            
-            
-            data = {
-                'status'  : True,
-                'message' : "File upload successful",
+                success = True
+            if success == True:
+                data = {
+                    'status'  : True,
+                    'message' : "File upload successful",
+                    
+                }
+
+                return Response(data, status = status.HTTP_200_OK)
+            else:
+                data = {
+                'status'  : False,
+                'message' : "Unsuccessful",
+                'errors'  : ["Error uploading file. Please check that fields are correct."]
                 
             }
 
-            return Response(data, status = status.HTTP_200_OK)
+            return Response(data, status = status.HTTP_400_BAD_REQUEST)
 
         else:
             data = {
