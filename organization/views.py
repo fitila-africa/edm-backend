@@ -553,7 +553,7 @@ def upload_csv(request):
             io_string = io.StringIO(decoded_file)
             
             reader = csv.DictReader(io_string)
-            
+            success = False
             for row in reader:
                 success = False
                 row['sector'] = Sector.objects.get(name = str(row['sector']))
