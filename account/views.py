@@ -58,8 +58,8 @@ def add_user(request):
 
 
 @api_view(['POST'])
-# @authentication_classes([JSONWebTokenAuthentication])
-# @permission_classes([IsAuthenticated])
+@authentication_classes([JSONWebTokenAuthentication])
+@permission_classes([IsAuthenticated])
 def add_admin(request):
 
     if request.method == 'POST':
