@@ -19,7 +19,7 @@ class EcoSystem(models.Model):
             "organizations": list(map(lambda x: {"id":x.id,
                                                 "name":x.name, 
                                                 "company_logo_url": x.company_logo_url, "ceo_image_url":x.ceo_image_url, "state":x.state, 
-                                                "sector":x.sector,
+                                                "sector":x.sector.name,
                                                 "employee" :x.num_of_employees, "funding":x.funding
                                                 },object.organizations.all()))
             }, sub))
