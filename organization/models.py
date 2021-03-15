@@ -108,3 +108,16 @@ class Organization(models.Model):
 
     def __str__(self):
         return self.name
+
+    @property
+    def sector_name(self):
+        return self.sector.name
+
+
+    @property
+    def ecosystem_name(self):
+        return self.ecosystem.name
+
+    @property
+    def sub_ecosystem_name(self):
+        return self.sub_ecosystem.name

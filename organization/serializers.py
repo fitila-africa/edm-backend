@@ -1,12 +1,6 @@
 from rest_framework import serializers
 from .models import Organization, EcoSystem, Sector, SubEcosystem
 
-class OrganizationSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Organization
-        fields = '__all__'
-
 class EcosystemSerializer(serializers.ModelSerializer):
     sub_ecosystem = serializers.ReadOnlyField()
 
@@ -33,3 +27,20 @@ class FileUploadSerializer(serializers.Serializer):
 
     class Meta:
         fields = ('file',)
+
+
+
+class OrganizationSerializer(serializers.ModelSerializer):
+    sector_name = serializers.ReadOnlyField()
+    ecosystem_name = serializers.ReadOnlyField()
+    sub_ecosystem_name = serializers.ReadOnlyField()
+
+    class Meta:
+        model = Organization
+        fields = ['user','name','company_logo','company_logo_url',          'num_of_employees','state', 'address','ecosystem', 'ecosystem_name',
+        'sub_ecosystem', 'sub_ecosystem_name',
+        'sub_ecosystem_sub_class','sector','sector_name','business_level',
+        'funding', 'company_valuation', 'is_startup', 'num_supported_business',
+        'ceo_name', 'ceo_image', 'ceo_image_url','website','email',
+        'phone','description','head_quarters', 'facebook',  
+        'instagram','linkedin', 'twitter', 'url_1','url_2','url_3','cac_doc','is_entrepreneur','is_ecosystem','is_active','date_created', 'date_updated']
