@@ -13,6 +13,8 @@ urlpatterns = [
    path('ecosystem/<int:pk>', views.ecosystem_detail),
    path('sub_ecosystem/', views.sub_ecosystem),
    path('sub_ecosystem/<int:pk>', views.sub_ecosystem_detail),
+   path('sector/', views.sector),
+   path('sector/<int:pk>', views.sector_detail),
    path('organizations/by_state/', views.state),
    path('organizations/upload_organizations/', views.upload_csv),
 

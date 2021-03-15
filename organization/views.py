@@ -3,8 +3,8 @@ from rest_framework.decorators import api_view, authentication_classes, permissi
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
-from .models import EcoSystem, Organization, SubEcosystem
-from .serializers import EcosystemSerializer, FileUploadSerializer, OrganizationSerializer, SubecosystemSerializer
+from .models import EcoSystem, Organization, Sector, SubEcosystem
+from .serializers import EcosystemSerializer, FileUploadSerializer, OrganizationSerializer, SectorSerializer, SubecosystemSerializer
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 import cloudinary
 import cloudinary.uploader
@@ -399,6 +399,118 @@ def sub_ecosystem_detail(request, pk):
             }
 
         return Response(data, status = status.HTTP_204_NO_CONTENT) 
+
+@api_view(['GET', 'POST'])
+# @authentication_classes([JSONWebTokenAuthentication])
+# @permission_classes([IsAuthenticated])
+def sector(request):
+    
+    if request.method == 'GET':
+        obj = Sector.objects.all()
+    
+        serializer = SectorSerializer(obj, many =True)
+
+        data = {
+                'status'  : True,
+                'message' : "Successful",
+                'data' : serializer.data,
+            }
+
+        return Response(data, status=status.HTTP_200_OK)
+
+
+    elif request.method == 'POST':
+        
+        serializer = SectorSerializer(data = request.data)
+        
+        if serializer.is_valid():
+        
+            obj = Sector.objects.create(**serializer.validated_data)
+            obj.save()
+
+            serializer = EcosystemSerializer(obj)
+            data = {
+                'status'  : True,
+                'message' : "Successful",
+                'data' : serializer.data,
+            }
+
+            return Response(data, status = status.HTTP_201_CREATED)
+
+        else:
+            data = {
+                'status'  : False,
+                'message' : "Unsuccessful",
+                'error' : serializer.errors,
+            }
+
+            return Response(data, status = status.HTTP_400_BAD_REQUEST)
+
+
+
+@api_view(['GET', 'PUT', 'DELETE']) 
+# @authentication_classes([JSONWebTokenAuthentication])
+# @permission_classes([IsAuthenticated])
+def sector_detail(request, pk):
+    try:
+        obj =  Sector.objects.get(pk = pk)
+    
+    except Sector.DoesNotExist:
+        data = {
+                'status'  : False,
+                'error' : "Does not exist"
+            }
+
+        return Response(data, status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'GET':
+        serializer = SectorSerializer(obj)
+        
+        data = {
+                'status'  : True,
+                'message' : "Successful",
+                'data' : serializer.data,
+            }
+
+        return Response(data, status=status.HTTP_200_OK)
+
+    #Update the item
+    elif request.method == 'PUT':
+        serializer = SectorSerializer(obj, data = request.data, partial=True) #allows you to be able to update one field of the model
+
+        if serializer.is_valid():
+
+
+            serializer.save()
+
+            data = {
+                'status'  : True,
+                'message' : "Successful",
+                'data' : serializer.data,
+            }
+
+            return Response(data, status = status.HTTP_201_CREATED)
+
+        else:
+            data = {
+                'status'  : False,
+                'message' : "Unsuccessful",
+                'error' : serializer.errors,
+            }
+
+            return Response(data, status = status.HTTP_400_BAD_REQUEST)
+
+    #de-activate the item
+    elif request.method == 'DELETE':
+        
+        obj.delete()
+        
+        data = {
+                'status'  : True,
+                'message' : "Deleted Successfully"
+            }
+
+        return Response(data, status = status.HTTP_204_NO_CONTENT)  
 
 
 @api_view(['GET'])

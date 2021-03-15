@@ -43,7 +43,28 @@ class SubEcosystem(models.Model):
         data = map(lambda object: {"id":object.id,"name":object.name}, organization)
         return list(data)
 
+class Sector(models.Model):
+    name = models.CharField(max_length=250, unique=True)
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_updated = models.DateTimeField(auto_now=True)
+
     
+
+    @property
+    def organization(self):
+        sector = self.organizations.all()
+
+        return list(map(lambda x: {"id":x.id,
+                                                "name":x.name, 
+                                                "company_logo_url": x.company_logo_url, "ceo_image_url":x.ceo_image_url, "state":x.state, 
+                                                "sector":x.sector.name,
+                                                "employee" :x.num_of_employees, "funding":x.funding
+                                                },sector))
+            
+
+    def __str__(self):
+        return self.name
+
 
 class Organization(models.Model):
     user                    = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='orgaizations', null=True)
@@ -56,7 +77,7 @@ class Organization(models.Model):
     ecosystem               = models.ForeignKey(EcoSystem, on_delete=models.CASCADE, related_name='organizations', blank =True, null=True)
     sub_ecosystem           = models.ForeignKey(SubEcosystem, on_delete=models.CASCADE, related_name='organizations', blank =True, null=True)
     sub_ecosystem_sub_class = models.CharField(max_length=200, null=True)
-    sector                  = models.CharField(max_length=200, blank =True, null=True)
+    sector                  = models.ForeignKey(Sector, on_delete=models.CASCADE, related_name='organizations', blank =True, null=True)
     business_level          = models.CharField(max_length=200, blank =True, null=True)
     funding                 = models.CharField(max_length=200, null=True)
     company_valuation       = models.CharField(max_length=200, null=True)

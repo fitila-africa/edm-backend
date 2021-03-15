@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Organization, EcoSystem, SubEcosystem
+from .models import Organization, EcoSystem, Sector, SubEcosystem
 
 class OrganizationSerializer(serializers.ModelSerializer):
 
@@ -21,6 +21,12 @@ class SubecosystemSerializer(serializers.ModelSerializer):
         model = SubEcosystem
         fields = ('id', 'name', 'ecosystem', 'organization', 'date_created', 'date_updated')
 
+class SectorSerializer(serializers.ModelSerializer):
+    organization = serializers.ReadOnlyField()
+
+    class Meta:
+        model = Sector
+        fields = ('id', 'name', 'organization', 'date_created', 'date_updated')
 
 class FileUploadSerializer(serializers.Serializer):
     file = serializers.FileField()
