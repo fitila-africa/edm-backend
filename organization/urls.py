@@ -7,6 +7,7 @@ app_name = 'organization'
 urlpatterns = [
 
    path('organizations/', views.organizations),
+   path('organizations/pending', views.unapproved_organizations),
    path('add_organization/', views.add_organization),
    path('organizations/<int:pk>', views.organization_detail),
    path('ecosystem/', views.ecosystem),

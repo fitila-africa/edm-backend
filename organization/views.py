@@ -176,6 +176,24 @@ def organization_detail(request, pk):
         return Response(data, status = status.HTTP_204_NO_CONTENT)
 
 
+
+@api_view(['GET'])
+def unapproved_organizations(request):
+    if request.method == 'GET':
+        organization = Organization.objects.all().filter(is_active=True).filter(is_approved=False)
+    
+        serializer = OrganizationSerializer(organization, many =True)
+
+        data = {
+                'status'  : True,
+                'message' : "Successful",
+                'data' : serializer.data,
+            }
+
+        return Response(data, status=status.HTTP_200_OK)
+
+
+
 @api_view(['GET', 'POST'])
 # @authentication_classes([JSONWebTokenAuthentication])
 # @permission_classes([IsAuthenticated])

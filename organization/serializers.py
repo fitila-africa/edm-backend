@@ -43,4 +43,4 @@ class OrganizationSerializer(serializers.ModelSerializer):
         'funding', 'company_valuation', 'is_startup', 'num_supported_business',
         'ceo_name', 'ceo_image', 'ceo_image_url','website','email',
         'phone','description','head_quarters', 'facebook',  
-        'instagram','linkedin', 'twitter', 'url_1','url_2','url_3','cac_doc','is_entrepreneur','is_ecosystem','is_active','date_created', 'date_updated']
+        'instagram','linkedin', 'twitter', 'url_1','url_2','url_3','cac_doc','is_entrepreneur','is_ecosystem','date_created', 'date_updated']
