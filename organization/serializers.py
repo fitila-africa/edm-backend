@@ -37,7 +37,7 @@ class OrganizationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Organization
-        fields = ['id','user','name','company_logo','company_logo_url',          'num_of_employees','state', 'address','ecosystem', 'ecosystem_name',
+        fields = ['id','user','name','company_logo','company_logo_url',         'num_of_employees','state', 'address','ecosystem', 'ecosystem_name',
         'sub_ecosystem', 'sub_ecosystem_name',
         'sub_ecosystem_sub_class','sector','sector_name','business_level',
         'funding', 'company_valuation', 'is_startup', 'num_supported_business',

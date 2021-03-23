@@ -20,7 +20,7 @@ import io
 def organizations(request):
     
     if request.method == 'GET':
-        organization = Organization.objects.all().filter(is_active=True)
+        organization = Organization.objects.all().filter(is_active=True).filter(is_approved=True)
     
         serializer = OrganizationSerializer(organization, many =True)
 

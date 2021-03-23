@@ -21,7 +21,7 @@ class EcoSystem(models.Model):
                                                 "company_logo_url": x.company_logo_url, "ceo_image_url":x.ceo_image_url, "state":x.state, 
                                                 "sector":x.sector.name,
                                                 "employee" :x.num_of_employees, "funding":x.funding
-                                                },object.organizations.all()))
+                                                },object.organizations.all().filter(is_active=True).filter(is_approved=True)))
             }, sub))
 
     def __str__(self):
@@ -39,7 +39,7 @@ class SubEcosystem(models.Model):
 
     @property
     def organization(self):
-        organization = self.sub_ecosystem.all()
+        organization =  self.organizations.all().filter(is_active=True).filter(is_approved=True)
         data = map(lambda object: {"id":object.id,"name":object.name}, organization)
         return list(data)
 
@@ -52,7 +52,7 @@ class Sector(models.Model):
 
     @property
     def organization(self):
-        sector = self.organizations.all()
+        sector = self.organizations.all().filter(is_active=True).filter(is_approved=True)
 
         return list(map(lambda x: {"id":x.id,
                                                 "name":x.name, 
@@ -61,9 +61,9 @@ class Sector(models.Model):
                                                 "employee" :x.num_of_employees, "funding":x.funding
                                                 },sector))
             
-
     def __str__(self):
         return self.name
+
 
 
 class Organization(models.Model):
@@ -102,6 +102,7 @@ class Organization(models.Model):
     is_entrepreneur         = models.BooleanField(default=False)
     is_ecosystem            = models.BooleanField(default=False)
     is_active               = models.BooleanField(default=True)
+    is_approved                = models.BooleanField(default=False)
     date_created            = models.DateTimeField(auto_now_add=True)
     date_updated            = models.DateTimeField(auto_now=True)
 
