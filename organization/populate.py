@@ -26,7 +26,7 @@ def populate_organization():
     print("=================\nWorking on new data\n")
     import csv
 
-    with open('organization/data-14-03-2021.csv', mode='r', encoding='UTF-8') as csv_file:
+    with open('organization/data-29-03-2021.csv', mode='r', encoding='UTF-8') as csv_file:
         csv_reader = csv.DictReader(csv_file)
         # line_count = 0
         for row in csv_reader:
@@ -36,7 +36,7 @@ def populate_organization():
             row['sub_ecosystem'] = SubEcosystem.objects.get(name = str(row['sub_ecosystem']), ecosystem=row['ecosystem'])
             # print(row['ecosystem'])
             # print(row)
-            Organization.objects.create(**row, is_active=True )
+            Organization.objects.create(**row, is_active=True, responded = True, is_approved=True )
             print(row['name'], 'Done')
 
 
@@ -47,19 +47,19 @@ def populate_sub():
     print("=================\nWorking on new data\n")
 
     data  = {
-        'Business support': [{ 'name':'Business Advisory'},{ 'name':'Mentoring' },  {'name':'Incubators'},{'name':'Accelerators'}, {'name':'Others'}],
+        'Business support': [{ 'name':'Business Advisory'},{ 'name':'Mentoring' },  {'name':'Incubators'},{'name':'Accelerators'}, {'name':'Resources'}, {'name':'Others'}],
 
         'Training' : [{'name':'Enterprise Support Organizations'}, {'name':'Incubators'},{'name':'Accelerators'}, {'name':'Virtual Learning'}, {'name':'Others'}],
 
-        'Funding' : [{'name':'Loan Providers'}, {'name':'Grant Providers'}, {'name':'Equity Funders'}, {'name':'Others'}],
+        'Funding' : [{'name':'Loan Providers'}, {'name':'Grant Providers'}, {'name':'Equity Funders'},{'name': 'Crowd Funding'}, {'name':'Others'}],
 
-        'Market Access':[{'name':'Distribution channels that facilitate trade'}, {'name':'Tech platforms that facilitate trade'}, {'name':'Organizations'}, {'name':'Tech Platforms'},{'name':'Others'}],
+        'Market Access':[{'name':'Distribution channels that facilitate trade'}, {'name':'Organizations'}, {'name':'Tech Platforms'},{'name':'Others'}],
         
         'Policy and Regulation': [{'name':'Government'},{'name': 'Regulators'}, {'name': 'Entrepreneurship Advocacy groups'}, {'name':'Others'}],
 
         # 'Resources':[{'name':'Virtual Resources'}, {'name':'In-person Resources'}, {'name':'Tools'}, {'name':'Services'}, {'name':'Others'}],
 
-        'Research and Development' :[{'name':'Makerspaces'}, {'name':'Research Centres'}, {'name':'Innovation and Design spaces for hardware and software'}, {'name':'Others'}],
+        'Research and Development' :[{'name':'Makerspaces'}, {'name':'Research Organizations/Centers'}, {'name':'Innovation and Design spaces for hardware and software'}, {'name':'Others'}],
   
         'MSMEs and Startups':[{'name':'MSMEs'}, {'name':'Others'}]}
 

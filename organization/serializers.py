@@ -41,6 +41,6 @@ class OrganizationSerializer(serializers.ModelSerializer):
         'sub_ecosystem', 'sub_ecosystem_name',
         'sub_ecosystem_sub_class','sector','sector_name','business_level',
         'funding', 'company_valuation', 'is_startup', 'num_supported_business',
-        'ceo_name', 'ceo_image', 'ceo_image_url','website','email',
+        'ceo_name', 'ceo_image', 'ceo_gender', 'ceo_image_url','website','email',
         'phone','description','head_quarters', 'facebook',  
         'instagram','linkedin', 'twitter', 'url_1','url_2','url_3','cac_doc','is_entrepreneur','is_ecosystem','date_created', 'date_updated']

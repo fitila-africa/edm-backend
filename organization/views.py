@@ -11,6 +11,8 @@ import cloudinary.uploader
 import csv
 import io
 
+from organization import serializers
+
 # Create your views here.
 
 
@@ -178,9 +180,9 @@ def organization_detail(request, pk):
 
 
 @api_view(['GET'])
-def unapproved_organizations(request):
+def pending_organizations(request):
     if request.method == 'GET':
-        organization = Organization.objects.all().filter(is_active=True).filter(is_approved=False)
+        organization = Organization.objects.all().filter(is_active=True).filter(responded =False)
     
         serializer = OrganizationSerializer(organization, many =True)
 
@@ -610,4 +612,99 @@ def upload_csv(request):
             return Response(data, status = status.HTTP_400_BAD_REQUEST)
 
 
+@api_view(['GET'])
+def approve_org(request, org_id):
+
+    try:
+        object = Organization.objects.get(id=org_id)
+
+    except Organization.DoesNotExist:
+        data = {
+                'status'  : False,
+                'error' : "Does not exist"
+            }
+
+        return Response(data, status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'GET':
         
+        object.is_approved = True
+        object.responded = True
+        object.save()
+
+        serializer = OrganizationSerializer(object)
+
+
+        data = {
+                'status'  : True,
+                'message' : "Successful",
+                'data' : serializer.data,
+            }
+
+        return Response(data, status = status.HTTP_202_ACCEPTED)
+
+    else:
+        data = {
+                'status'  : False,
+                'message' : "Unsuccessful",
+                'error'   : 'Wrong HTTP Method. Required method is GET'
+            }
+
+        return Response(data, status = status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+def reject_org(request, org_id):
+    
+    try:
+        object = Organization.objects.get(id=org_id)
+
+    except Organization.DoesNotExist:
+        data = {
+                'status'  : False,
+                'error' : "Does not exist"
+            }
+
+        return Response(data, status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'GET':
+        
+        object.is_declined = True
+        object.responded = True
+        object.save()
+
+        serializer = OrganizationSerializer(object)
+
+
+        data = {
+                'status'  : True,
+                'message' : "Successful",
+                'data' : serializer.data,
+            }
+
+        return Response(data, status = status.HTTP_202_ACCEPTED)
+
+    else:
+        data = {
+                'status'  : False,
+                'message' : "Unsuccessful",
+                'error'   : 'Wrong HTTP Method. Required method is GET'
+            }
+
+        return Response(data, status = status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+def rejected_org(request):
+    if request.method == 'GET':
+        organization = Organization.objects.all().filter(is_active=True).filter(is_declined =True)
+    
+        serializer = OrganizationSerializer(organization, many =True)
+
+        data = {
+                'status'  : True,
+                'message' : "Successful",
+                'data' : serializer.data,
+            }
+
+        return Response(data, status=status.HTTP_200_OK)

@@ -84,6 +84,7 @@ class Organization(models.Model):
     is_startup              = models.CharField(max_length=20, blank =True, null=True)
     num_supported_business  = models.CharField(max_length=20, blank =True, null=True)
     ceo_name                = models.CharField(max_length=200, null=True)
+    ceo_gender              = models.CharField(max_length=200, null=True)
     ceo_image               = models.ImageField(null=True)
     ceo_image_url           = models.CharField(max_length=200, null=True)
     website                 = models.CharField(max_length=350, blank =True, null=True)
@@ -103,6 +104,8 @@ class Organization(models.Model):
     is_ecosystem            = models.BooleanField(default=False)
     is_active               = models.BooleanField(default=True)
     is_approved                = models.BooleanField(default=False)
+    is_declined              = models.BooleanField(default=False)
+    responded               = models.BooleanField(default=False)
     date_created            = models.DateTimeField(auto_now_add=True)
     date_updated            = models.DateTimeField(auto_now=True)
 

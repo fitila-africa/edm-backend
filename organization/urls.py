@@ -1,4 +1,3 @@
-from organization.views import ecosystem
 from django.urls import path
 from organization import views
 
@@ -7,7 +6,10 @@ app_name = 'organization'
 urlpatterns = [
 
    path('organizations/', views.organizations),
-   path('organizations/pending', views.unapproved_organizations),
+   path('organizations/pending', views.pending_organizations),
+   path('organizations/approve', views.approve_org),
+   path('organizations/decline', views.reject_org),
+   path('organizations/rejected', views.rejected_org),
    path('add_organization/', views.add_organization),
    path('organizations/<int:pk>', views.organization_detail),
    path('ecosystem/', views.ecosystem),
