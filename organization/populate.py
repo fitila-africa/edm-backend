@@ -82,17 +82,15 @@ def add_sector():
     print("=================\nWorking on new data\n")
 
     sectors = ['Health',
-            'Manufacturing',
-            'Development Sector',
-            'Others',
-            'Technology',
-            'Private Sector',
-            'Public Sector',
-            'Creatives',
-            'Agribusiness',
-            'Access to Credit Platform Facilitator',
-            'Trade Groups/Associations',
-            'Education']
+ 'Manufacturing',
+ 'Development Sector',
+ 'Others',
+ 'Technology',
+ 'Private Sector',
+ 'Public Sector',
+ 'Creatives',
+ 'Agribusiness',
+ 'Education']
 
     for i in sectors:
         Sector.objects.create(name=i)
