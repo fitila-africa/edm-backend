@@ -26,7 +26,7 @@ def populate_organization():
     print("=================\nWorking on new data\n")
     import csv
 
-    with open('organization/data-29-03-2021.csv', mode='r', encoding='UTF-8') as csv_file:
+    with open('organization/revised_data.csv', mode='r', encoding='UTF-8') as csv_file:
         csv_reader = csv.DictReader(csv_file)
         # line_count = 0
         for row in csv_reader:
@@ -47,19 +47,19 @@ def populate_sub():
     print("=================\nWorking on new data\n")
 
     data  = {
-        'Business support': [{ 'name':'Business Advisory'},{ 'name':'Mentoring' },  {'name':'Incubators'},{'name':'Accelerators'}, {'name':'Resources'}, {'name':'Others'}],
+        'Business support': [{'name': 'Business Advisory'}, {'name': 'Mentoring'}, {'name': 'Resources'}, {'name': 'Incubators'}, {'name':'Others'}],
 
-        'Training' : [{'name':'Enterprise Support Organizations'}, {'name':'Incubators'},{'name':'Accelerators'}, {'name':'Virtual Learning'}, {'name':'Others'}],
+        'Training' : [{'name': 'Enterprise Support Organizations'}, {'name': 'Incubators'}, {'name':'Others'}],
 
-        'Funding' : [{'name':'Loan Providers'}, {'name':'Grant Providers'}, {'name':'Equity Funders'},{'name': 'Crowd Funding'}, {'name':'Others'}],
+        'Funding' : [{'name': 'Loan Providers'}, {'name': 'Grant Providers'}, {'name': 'Equity Funders'}, {'name': 'Crowdfunding'}, {'name':'Others'}],
 
-        'Market Access':[{'name':'Distribution channels that facilitate trade'}, {'name':'Organizations'}, {'name':'Tech Platforms'},{'name':'Others'}],
+        'Market Access':[{'name': 'Tech Platforms'}, {'name': 'Organizations'},{'name':'Others'}],
         
-        'Policy and Regulation': [{'name':'Government'},{'name': 'Regulators'}, {'name': 'Entrepreneurship Advocacy groups'}, {'name':'Others'}],
+        'Policy and Regulation': [{'name': 'Regulators'}, {'name': 'Entrepreneurship Advocacy groups'}, {'name': 'Government'}, {'name':'Others'}],
 
         # 'Resources':[{'name':'Virtual Resources'}, {'name':'In-person Resources'}, {'name':'Tools'}, {'name':'Services'}, {'name':'Others'}],
 
-        'Research and Development' :[{'name':'Makerspaces'}, {'name':'Research Organizations/Centers'}, {'name':'Innovation and Design spaces for hardware and software'}, {'name':'Others'}],
+        'Research and Development' :[{'name': 'Research Organizations/Centres'}, {'name': 'Others'}],
   
         'MSMEs and Startups':[{'name':'MSMEs'}, {'name':'Others'}]}
 
@@ -81,13 +81,18 @@ def add_sector():
     print("Cleared former data")
     print("=================\nWorking on new data\n")
 
-    sectors = ['Incubators & Accelerators', 'Government',
-       'Development/Non Profit Organisation',
-       'Private Sector Groups & Associations',
-       'Equity-Venture Capital/Angel Investors', 'Trade Groups/Associations',
-       'Loans/Debt', 'Academia', 'Non-Profit', 'Others',
-       'For Profit/Corporates', 'Virtual Information Portals', 'Grants',
-       'Access to Credit Platform Facilitators', 'Crowdfunding', 'eCommerce']
+    sectors = ['Health',
+            'Manufacturing',
+            'Development Sector',
+            'Others',
+            'Technology',
+            'Private Sector',
+            'Public Sector',
+            'Creatives',
+            'Agribusiness',
+            'Access to Credit Platform Facilitator',
+            'Trade Groups/Associations',
+            'Education']
 
     for i in sectors:
         Sector.objects.create(name=i)
