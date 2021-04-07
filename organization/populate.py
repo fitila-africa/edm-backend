@@ -31,8 +31,9 @@ def populate_organization():
         # line_count = 0
         for row in csv_reader:
             row['sector'] = Sector.objects.get(name = str(row['sector']))
+            print(row['ecosystem'])
             row['ecosystem'] = EcoSystem.objects.get(name = str(row['ecosystem']))
-            print(row['sub_ecosystem'])
+            
             row['sub_ecosystem'] = SubEcosystem.objects.get(name = str(row['sub_ecosystem']), ecosystem=row['ecosystem'])
             # print(row['ecosystem'])
             # print(row)
