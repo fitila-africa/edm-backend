@@ -23,7 +23,7 @@ class SectorSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'organization', 'date_created', 'date_updated')
 
 class FileUploadSerializer(serializers.Serializer):
-    file = serializers.FileField()
+    file = serializers.FileField(required=True)
 
     class Meta:
         fields = ('file',)

@@ -1,8 +1,9 @@
+from django.db.models.query import prefetch_related_objects
 from django.shortcuts import render
 from rest_framework.decorators import api_view, authentication_classes, permission_classes 
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import exceptions, status
 from .models import EcoSystem, Organization, Sector, SubEcosystem
 from .serializers import EcosystemSerializer, FileUploadSerializer, OrganizationSerializer, SectorSerializer, SubecosystemSerializer
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
@@ -11,7 +12,7 @@ import cloudinary.uploader
 import csv
 import io
 
-from organization import serializers
+from .populate import process_data
 
 # Create your views here.
 
@@ -567,22 +568,36 @@ def upload_csv(request):
         if serializer.is_valid():
             
             file = serializer.validated_data['file']
-            
-            decoded_file = file.read().decode()
-            
-            io_string = io.StringIO(decoded_file)
-            
-            reader = csv.DictReader(io_string)
-            success = False
-            for row in reader:
-                success = False
-                row['sector'] = Sector.objects.get(name = str(row['sector']))
-                row['ecosystem'] = EcoSystem.objects.get(name = str(row['ecosystem']))
-                row['sub_ecosystem'] = SubEcosystem.objects.get(name = str(row['sub_ecosystem']), ecosystem=row['ecosystem'])
-                
-                Organization.objects.create(**row, is_active=True )
+            try:
 
-                success = True
+                rows = process_data(file)
+            except Exception:
+                data = {
+                'status'  : False,
+                'message' : "Unsuccessful",
+                'errors'  : ["Error uploading file.\n Please check that headers are correct."]
+                
+                }
+                return Response(data, status = status.HTTP_400_BAD_REQUEST)
+            
+            # decoded_file = file.read().decode()
+            
+            # io_string = io.StringIO(decoded_file)
+            
+            # reader = csv.DictReader(io_string)
+            success = False
+            for row in rows:
+                success = False
+                try:
+                    row['sector'] = Sector.objects.get(name = str(row['sector']))
+                    row['ecosystem'] = EcoSystem.objects.get(name = str(row['ecosystem']))
+                    row['sub_ecosystem'] = SubEcosystem.objects.get(name = str(row['sub_ecosystem']), ecosystem=row['ecosystem'])
+                    
+                    Organization.objects.create(**row, is_active=True, is_approved=True, responded=True)
+
+                    success = True
+                except Exception:
+                    success = False
             if success == True:
                 data = {
                     'status'  : True,
@@ -595,7 +610,7 @@ def upload_csv(request):
                 data = {
                 'status'  : False,
                 'message' : "Unsuccessful",
-                'errors'  : ["Error uploading file. Please check that fields are correct."]
+                'errors'  : ["Error uploading file.\n Please check that fields are correct."]
                 
             }
 

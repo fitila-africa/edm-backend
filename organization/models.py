@@ -18,7 +18,9 @@ class EcoSystem(models.Model):
             "name":object.name, 
             "organizations": list(map(lambda x: {"id":x.id,
                                                 "name":x.name, 
-                                                "company_logo_url": x.company_logo_url, "ceo_image_url":x.ceo_image_url, "state":x.state, 
+                                                "company_logo_url": x.company_logo_url, "ceo_image_url":x.ceo_image_url, 
+                                                "ceo_name":x.ceo_name,
+                                                "state":x.state, 
                                                 "sector":x.sector.name,
                                                 "sub_ecosystem_sub_class":x.sub_ecosystem_sub_class,
                                                 "employee" :x.num_of_employees, "funding":x.funding
@@ -57,7 +59,9 @@ class Sector(models.Model):
 
         return list(map(lambda x: {"id":x.id,
                                                 "name":x.name, 
-                                                "company_logo_url": x.company_logo_url, "ceo_image_url":x.ceo_image_url, "state":x.state, 
+                                                "company_logo_url": x.company_logo_url,
+                                                "ceo_name":x.ceo_name,
+                                             "ceo_image_url":x.ceo_image_url, "state":x.state, 
                                                 "sector":x.sector.name,
                                                 "employee" :x.num_of_employees,
                                                 "funding":x.funding

@@ -1,5 +1,6 @@
 import organization
 from .models import EcoSystem, Organization, Sector, SubEcosystem
+import pandas as pd
 
 def populate_ecosystem():
     a = EcoSystem.objects.all()
@@ -96,3 +97,39 @@ def add_sector():
     for i in sectors:
         Sector.objects.create(name=i)
         print('{} Done'.format(i))
+
+
+
+
+
+################ DATA CLEANING FUNCTION #################
+
+def process_data(file):
+    """ This function takes in the file that was uploaded, reads it with pandas and cleans the data for saving into the model."""
+    #read the file
+    revised_data = pd.read_csv(file)
+    #sector
+    revised_data.sector.fillna('Others',inplace=True)
+    revised_data.sector.replace('Access to Credit Platform Facilitators', 'Access to Credit Platform Facilitator', inplace=True)
+    #ecosystem
+    revised_data.ecosystem.replace('Research & Development', 'Research and Development', inplace=True)
+    revised_data.ecosystem.replace('MSMEs & Startups', 'MSMEs and Startups', inplace=True)
+    # sub_ecosystems
+    revised_data.sub_ecosystem.fillna('Others', inplace=True)
+    revised_data.ceo_gender.fillna('Nil', inplace =True)
+    revised_data.ceo_gender = revised_data.ceo_gender.apply(lambda x : x.title())
+    revised_data.rename(columns={'ceo/founder/director name':'ceo_name'}, inplace=True)
+    revised_data.ceo_name.fillna('Nil', inplace=True)
+    revised_data.fillna('', inplace=True)
+    revised_data.set_index('name', inplace=True)
+    
+    cols = ['name']
+    cols.extend([k for k in revised_data.columns])
+    rows = []
+    for row in revised_data.itertuples():
+        each_data = {}
+        for i in range(len(cols)):
+            each_data[cols[i]]=row[i]
+
+        rows.append(each_data)
+    return rows
