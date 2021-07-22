@@ -1,5 +1,3 @@
-from django.db.models.query import prefetch_related_objects
-from django.shortcuts import render
 from rest_framework.decorators import api_view, authentication_classes, permission_classes 
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -9,8 +7,7 @@ from .serializers import EcosystemSerializer, FileUploadSerializer, Organization
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 import cloudinary
 import cloudinary.uploader
-import csv
-import io
+from drf_yasg.utils import swagger_auto_schema
 
 from .populate import process_data
 
@@ -35,7 +32,7 @@ def organizations(request):
 
         return Response(data, status=status.HTTP_200_OK)
 
-
+@swagger_auto_schema(methods=['POST'], request_body=OrganizationSerializer())
 @api_view(['POST'])
 # @authentication_classes([JSONWebTokenAuthentication])
 # @permission_classes([IsAuthenticated])
@@ -100,7 +97,7 @@ def add_organization(request):
             return Response(data, status = status.HTTP_400_BAD_REQUEST)
 
 
-
+@swagger_auto_schema(methods=['PUT', 'DELETE'], request_body=OrganizationSerializer())
 @api_view(['GET', 'PUT', 'DELETE']) 
 # @authentication_classes([JSONWebTokenAuthentication])
 # @permission_classes([IsAuthenticated])
@@ -196,7 +193,7 @@ def pending_organizations(request):
         return Response(data, status=status.HTTP_200_OK)
 
 
-
+@swagger_auto_schema(methods=['POST'], request_body=EcosystemSerializer())
 @api_view(['GET', 'POST'])
 # @authentication_classes([JSONWebTokenAuthentication])
 # @permission_classes([IsAuthenticated])
@@ -244,7 +241,7 @@ def ecosystem(request):
             return Response(data, status = status.HTTP_400_BAD_REQUEST)
 
 
-
+@swagger_auto_schema(methods=['PUT', 'DELETE'], request_body=EcosystemSerializer())
 @api_view(['GET', 'PUT', 'DELETE']) 
 # @authentication_classes([JSONWebTokenAuthentication])
 # @permission_classes([IsAuthenticated])
@@ -310,6 +307,7 @@ def ecosystem_detail(request, pk):
         return Response(data, status = status.HTTP_204_NO_CONTENT)       
 
 
+@swagger_auto_schema(methods=['POST'], request_body=SubecosystemSerializer())
 @api_view(['GET', 'POST'])
 # @authentication_classes([JSONWebTokenAuthentication])
 # @permission_classes([IsAuthenticated])
@@ -356,7 +354,7 @@ def sub_ecosystem(request):
             return Response(data, status = status.HTTP_400_BAD_REQUEST)
 
 
-
+@swagger_auto_schema(methods=['PUT'], request_body=SubecosystemSerializer())
 @api_view(['GET', 'PUT', 'DELETE']) 
 # @authentication_classes([JSONWebTokenAuthentication])
 # @permission_classes([IsAuthenticated])
@@ -421,6 +419,7 @@ def sub_ecosystem_detail(request, pk):
 
         return Response(data, status = status.HTTP_204_NO_CONTENT) 
 
+@swagger_auto_schema(methods=['POST'], request_body=SectorSerializer())
 @api_view(['GET', 'POST'])
 # @authentication_classes([JSONWebTokenAuthentication])
 # @permission_classes([IsAuthenticated])
@@ -468,7 +467,7 @@ def sector(request):
             return Response(data, status = status.HTTP_400_BAD_REQUEST)
 
 
-
+@swagger_auto_schema(methods=['PUT'], request_body=SectorSerializer())
 @api_view(['GET', 'PUT', 'DELETE']) 
 # @authentication_classes([JSONWebTokenAuthentication])
 # @permission_classes([IsAuthenticated])
@@ -555,7 +554,7 @@ def state(request):
 
     return Response(data, status = status.HTTP_200_OK)
 
-
+@swagger_auto_schema(methods=['POST'], request_body=FileUploadSerializer())
 @api_view(['POST'])
 def upload_csv(request):
 
