@@ -1,5 +1,5 @@
-from cms.models import AboutUsContent
+from cms.models import *
 from django.contrib import admin
 
 # Register your models here.
-admin.site.register(AboutUsContent)
+admin.site.register([FAQ])
