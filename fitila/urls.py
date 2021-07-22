@@ -15,10 +15,29 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from rest_framework import permissions # new
+from drf_yasg.views import get_schema_view # new
+from drf_yasg import openapi # new
+
+
+schema_view = get_schema_view( # new
+    openapi.Info(
+        title="EDM API",
+        default_version="v1",
+        description="Api documentation for Enterprise Data Mapping project.",
+        terms_of_service="",
+        contact=openapi.Contact(email="desmond@getmobile.tech"),
+        license=openapi.License(name="MIT License"),
+    ),
+    public=True,
+    permission_classes=(permissions.AllowAny,),
+)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/v1/account/', include('account.urls', namespace = 'account')),
     path('api/v1/', include('organization.urls', namespace = 'organization')), 
     path('api/v1/cms/', include('cms.urls')), 
+    path('', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    path('docs/redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 ]
