@@ -1,3 +1,4 @@
+from drf_yasg import openapi
 from rest_framework.decorators import api_view, authentication_classes, permission_classes 
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -14,7 +15,10 @@ from django.contrib.auth.signals import user_logged_in
 
 import cloudinary
 import cloudinary.uploader
+from drf_yasg.utils import swagger_auto_schema
 
+
+@swagger_auto_schema(methods=['POST'], request_body=UserSerializer())
 @api_view(['POST'])
 # @authentication_classes([JSONWebTokenAuthentication])
 # @permission_classes([IsAuthenticated])
@@ -56,7 +60,7 @@ def add_user(request):
             return Response(data, status = status.HTTP_400_BAD_REQUEST)
 
 
-
+@swagger_auto_schema(methods=['POST'], request_body=UserSerializer())
 @api_view(['POST'])
 @authentication_classes([JSONWebTokenAuthentication])
 @permission_classes([IsAuthenticated])
@@ -117,6 +121,7 @@ def get_user(request):
 
 #Get the detail of a single user by their ID
 
+@swagger_auto_schema(methods=['PUT', 'DELETE'], request_body=UserSerializer())
 @api_view(['GET', 'PUT', 'DELETE'])
 @authentication_classes([JSONWebTokenAuthentication])
 @permission_classes([IsAuthenticated])
@@ -184,7 +189,13 @@ def user_detail(request, pk):
 
         return Response(data, status = status.HTTP_204_NO_CONTENT)
 
-
+@swagger_auto_schema(method='post', request_body=openapi.Schema(
+    type=openapi.TYPE_OBJECT, 
+    properties={
+        'email': openapi.Schema(type=openapi.TYPE_STRING, description='string'),
+        'password': openapi.Schema(type=openapi.TYPE_STRING, description='string'),
+    }
+))
 @api_view([ 'POST'])
 def user_login(request):
     

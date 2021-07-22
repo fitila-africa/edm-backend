@@ -5,6 +5,7 @@ from . models import *
 from . serializers import *
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
+from drf_yasg.utils import swagger_auto_schema
 # Create your views here.
 
 # @api_view(['GET', 'PUT'])
@@ -30,7 +31,7 @@ from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 #             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-
+@swagger_auto_schema(method='post', request_body=FAQSerializer())
 @api_view(['GET', 'POST'])
 @authentication_classes([JSONWebTokenAuthentication])
 @permission_classes([IsAuthenticatedOrReadOnly])
@@ -73,7 +74,7 @@ def faq(request):
             return Response(data, status = status.HTTP_400_BAD_REQUEST)
 
 
-
+@swagger_auto_schema(method='put', request_body=FAQSerializer())
 @api_view(['GET', 'PUT', 'DELETE']) 
 @authentication_classes([JSONWebTokenAuthentication])
 @permission_classes([IsAuthenticated])
