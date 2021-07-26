@@ -179,8 +179,7 @@ def organization_detail(request, pk):
     #de-activate the item
     elif request.method == 'DELETE':
         
-        organization.is_active = False
-        organization.save() 
+        organization.delete()
         
         data = {
                 'status'  : True,
@@ -214,7 +213,7 @@ def pending_organizations(request):
 def ecosystem(request):
     
     if request.method == 'GET':
-        eco = EcoSystem.objects.all()
+        eco = EcoSystem.objects.filter(is_active=True)
     
         serializer = EcosystemSerializer(eco, many =True)
 
@@ -261,7 +260,7 @@ def ecosystem(request):
 # @permission_classes([IsAuthenticated])
 def ecosystem_detail(request, pk):
     try:
-        eco =  EcoSystem.objects.get(pk = pk)
+        eco =  EcoSystem.objects.get(pk = pk, is_active=True)
     
     except EcoSystem.DoesNotExist:
         data = {
@@ -328,7 +327,7 @@ def ecosystem_detail(request, pk):
 def sub_ecosystem(request):
     
     if request.method == 'GET':
-        eco = SubEcosystem.objects.all()
+        eco = SubEcosystem.objects.filter(is_active=True)
     
         serializer = SubecosystemSerializer(eco, many =True)
 
@@ -374,7 +373,7 @@ def sub_ecosystem(request):
 # @permission_classes([IsAuthenticated])
 def sub_ecosystem_detail(request, pk):
     try:
-        eco =  SubEcosystem.objects.get(pk = pk)
+        eco =  SubEcosystem.objects.get(pk = pk, is_active=True)
     
     except SubEcosystem.DoesNotExist:
         data = {
@@ -440,7 +439,7 @@ def sub_ecosystem_detail(request, pk):
 def sector(request):
     
     if request.method == 'GET':
-        obj = Sector.objects.all()
+        obj = Sector.objects.filter(is_active=True)
     
         serializer = SectorSerializer(obj, many =True)
 
@@ -487,7 +486,7 @@ def sector(request):
 # @permission_classes([IsAuthenticated])
 def sector_detail(request, pk):
     try:
-        obj =  Sector.objects.get(pk = pk)
+        obj =  Sector.objects.get(pk = pk, is_active=True)
     
     except Sector.DoesNotExist:
         data = {

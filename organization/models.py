@@ -6,6 +6,7 @@ class EcoSystem(models.Model):
     description = models.CharField(max_length=250, null=True)
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
+    is_active = models.BooleanField(default=True)
 
     
 
@@ -26,14 +27,28 @@ class EcoSystem(models.Model):
                                                 "employee" :x.num_of_employees, "funding":x.funding
                                                 },object.organizations.all().filter(is_active=True).filter(is_approved=True)))
             }, sub))
-
+        
+    @property
+    def num_of_organization(self):
+        return self.organizations.filter(is_active=True).count()
+    
+    @property
+    def num_of_states(self):
+        return self.organizations.values('state').distinct().count()
+    
     def __str__(self):
         return self.name
+    
+    def delete(self):
+        self.is_active = False
+        self.save()
+        return 
 
 class SubEcosystem(models.Model):
     name = models.CharField(max_length=250)
     description = models.CharField(max_length=250, null=True)
     ecosystem = models.ForeignKey(EcoSystem, on_delete=models.CASCADE, related_name='ecosystems')
+    is_active = models.BooleanField(default=True)
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
 
@@ -45,11 +60,17 @@ class SubEcosystem(models.Model):
         organization =  self.organizations.all().filter(is_active=True).filter(is_approved=True)
         data = map(lambda object: {"id":object.id,"name":object.name}, organization)
         return list(data)
+    
+    def delete(self):
+        self.is_active = False
+        self.save()
+        return 
 
 class Sector(models.Model):
     name = models.CharField(max_length=250, unique=True)
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
+    is_active = models.BooleanField(default=True)
 
     
 
@@ -69,6 +90,11 @@ class Sector(models.Model):
             
     def __str__(self):
         return self.name
+    
+    def delete(self):
+        self.is_active = False
+        self.save()
+        return 
 
 
 
@@ -131,3 +157,9 @@ class Organization(models.Model):
     @property
     def sub_ecosystem_name(self):
         return self.sub_ecosystem.name
+    
+    
+    def delete(self):
+        self.is_active = False
+        self.save()
+        return 
