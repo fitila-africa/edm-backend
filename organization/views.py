@@ -43,40 +43,46 @@ def add_organization(request):
         serializer = OrganizationSerializer(data = request.data)
 
         if serializer.is_valid():
+            try:
 
-            if serializer.validated_data['company_logo'] is not None:
-            #upload the company's logo
-                company_logo = serializer.validated_data['company_logo'] #get the image file from the request 
-                img1 = cloudinary.uploader.upload(company_logo, folder = 'fitila/company_logo/') #upload the image to cloudinary
-                serializer.validated_data['company_logo'] = "" #delete the image file
-                serializer.validated_data['company_logo_url'] = img1['secure_url'] #save the image url 
-            else: 
+                if serializer.validated_data['company_logo'] is not None:
+                #upload the company's logo
+                    company_logo = serializer.validated_data['company_logo'] #get the image file from the request 
+                    img1 = cloudinary.uploader.upload(company_logo, folder = 'fitila/company_logo/') #upload the image to cloudinary
+                    serializer.validated_data['company_logo'] = "" #delete the image file
+                    serializer.validated_data['company_logo_url'] = img1['secure_url'] #save the image url 
+                else: 
+                    data = {
+                    'status'  : False,
+                    'message' : "Unsuccessful",
+                    'error' : ["Company logo is required"],
+                    }
+
+                    return Response(data, status = status.HTTP_400_BAD_REQUEST)
+
+                if serializer.validated_data['ceo_image'] is not None:
+                # upload the ceo's image
+                    ceo_image = serializer.validated_data['ceo_image'] #get the image file from the request 
+                    img2 = cloudinary.uploader.upload(ceo_image, folder = 'fitila/ceo_image/') #upload the image to cloudinary
+                    serializer.validated_data['ceo_image'] = "" #delete the image file
+                    serializer.validated_data['ceo_image_url'] = img2['secure_url'] #save the image url 
+                else: 
+                    data = {
+                    'status'  : False,
+                    'message' : "Unsuccessful",
+                    'error' : ["CEO's Image is required"],
+                    }
+
+                    return Response(data, status = status.HTTP_400_BAD_REQUEST)
+            except Exception:
                 data = {
-                'status'  : False,
-                'message' : "Unsuccessful",
-                'error' : ["Company logo is required"],
-            }
-
+                    'status'  : False,
+                    'message' : "Unsuccessful",
+                    'error' : ["Unable to add organization"],
+                }
                 return Response(data, status = status.HTTP_400_BAD_REQUEST)
-
-            if serializer.validated_data['ceo_image'] is not None:
-            # upload the ceo's image
-                ceo_image = serializer.validated_data['ceo_image'] #get the image file from the request 
-                img2 = cloudinary.uploader.upload(ceo_image, folder = 'fitila/ceo_image/') #upload the image to cloudinary
-                serializer.validated_data['ceo_image'] = "" #delete the image file
-                serializer.validated_data['ceo_image_url'] = img2['secure_url'] #save the image url 
-            else: 
-                data = {
-                'status'  : False,
-                'message' : "Unsuccessful",
-                'error' : ["CEO's Image is required"],
-            }
-
-                return Response(data, status = status.HTTP_400_BAD_REQUEST)
-
             
             organization = Organization.objects.create(**serializer.validated_data)
-            organization.save()
 
             serializer = OrganizationSerializer(organization)
             data = {
@@ -129,18 +135,26 @@ def organization_detail(request, pk):
         serializer = OrganizationSerializer(organization, data = request.data, partial=True) #allows you to be able to update one field of the model
 
         if serializer.is_valid():
+            try:
 
-            if 'ceo_image' in serializer.validated_data.keys():
-                ceo_image = serializer.validated_data['ceo_image'] #get the image file from the request 
-                img2 = cloudinary.uploader.upload(ceo_image, folder = 'fitila/ceo_image/') #upload the image to cloudinary
-                serializer.validated_data['ceo_image'] = "" #delete the image file
-                serializer.validated_data['ceo_image_url'] = img2['secure_url'] #save the image url
+                if 'ceo_image' in serializer.validated_data.keys():
+                    ceo_image = serializer.validated_data['ceo_image'] #get the image file from the request 
+                    img2 = cloudinary.uploader.upload(ceo_image, folder = 'fitila/ceo_image/') #upload the image to cloudinary
+                    serializer.validated_data['ceo_image'] = "" #delete the image file
+                    serializer.validated_data['ceo_image_url'] = img2['secure_url'] #save the image url
 
-            if 'company_logo' in serializer.validated_data.keys():
-                company_logo = serializer.validated_data['company_logo'] #get the image file from the request 
-                img1 = cloudinary.uploader.upload(company_logo, folder = 'fitila/company_logo/') #upload the image to cloudinary
-                serializer.validated_data['company_logo'] = "" #delete the image file
-                serializer.validated_data['company_logo_url'] = img1['secure_url'] #save the image url 
+                if 'company_logo' in serializer.validated_data.keys():
+                    company_logo = serializer.validated_data['company_logo'] #get the image file from the request 
+                    img1 = cloudinary.uploader.upload(company_logo, folder = 'fitila/company_logo/') #upload the image to cloudinary
+                    serializer.validated_data['company_logo'] = "" #delete the image file
+                    serializer.validated_data['company_logo_url'] = img1['secure_url'] #save the image url 
+            except Exception:
+                data = {
+                    'status'  : False,
+                    'message' : "Unsuccessful",
+                    'error' : ["Unable to update organization"],
+                }
+                return Response(data, status = status.HTTP_400_BAD_REQUEST)
 
 
             serializer.save()
