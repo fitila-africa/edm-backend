@@ -36,6 +36,10 @@ class EcoSystem(models.Model):
     def num_of_states(self):
         return self.organizations.values('state').distinct().count()
     
+    @property
+    def num_of_sectors(self):
+        return self.organizations.values('sector').distinct().count()
+    
     def __str__(self):
         return self.name
     
