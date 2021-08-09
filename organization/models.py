@@ -134,6 +134,7 @@ class Organization(models.Model):
     sector                  = models.ForeignKey(Sector, on_delete=models.CASCADE, related_name='organizations', blank =True, null=True)
     business_level          = models.CharField(max_length=200, blank =True, null=True)
     funding                 = models.IntegerField(default=0)
+    funding_disbursed_for_support = models.IntegerField(default=0)
     company_valuation       = models.CharField(max_length=200, null=True)
     is_startup              = models.CharField(max_length=20, blank =True, null=True)
     num_supported_business  = models.CharField(max_length=20, blank =True, null=True)
