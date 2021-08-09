@@ -69,6 +69,23 @@ class SubEcosystem(models.Model):
         self.is_active = False
         self.save()
         return 
+    
+class SubecosystemSubclass(models.Model):
+    name = models.CharField(max_length=250)
+    sub_ecosystem = models.ForeignKey(SubEcosystem, on_delete=models.CASCADE, related_name='sub_class')
+    ecosystem = models.ForeignKey(EcoSystem, on_delete=models.CASCADE, related_name='sub_class')
+    is_active = models.BooleanField(default=True)
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_updated = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.name
+
+    
+    def delete(self):
+        self.is_active = False
+        self.save()
+        return 
 
 class Sector(models.Model):
     name = models.CharField(max_length=250, unique=True)
@@ -112,10 +129,10 @@ class Organization(models.Model):
     address                 = models.CharField(max_length=250)
     ecosystem               = models.ForeignKey(EcoSystem, on_delete=models.CASCADE, related_name='organizations', blank =True, null=True)
     sub_ecosystem           = models.ForeignKey(SubEcosystem, on_delete=models.CASCADE, related_name='organizations', blank =True, null=True)
-    sub_ecosystem_sub_class = models.CharField(max_length=200, null=True)
+    sub_ecosystem_sub_class = models.ForeignKey(SubecosystemSubclass, on_delete=models.CASCADE, related_name='organizations', blank =True, null=True)
     sector                  = models.ForeignKey(Sector, on_delete=models.CASCADE, related_name='organizations', blank =True, null=True)
     business_level          = models.CharField(max_length=200, blank =True, null=True)
-    funding                 = models.CharField(max_length=200, null=True)
+    funding                 = models.IntegerField(default=0)
     company_valuation       = models.CharField(max_length=200, null=True)
     is_startup              = models.CharField(max_length=20, blank =True, null=True)
     num_supported_business  = models.CharField(max_length=20, blank =True, null=True)
@@ -161,6 +178,10 @@ class Organization(models.Model):
     @property
     def sub_ecosystem_name(self):
         return self.sub_ecosystem.name
+    
+    @property
+    def sub_ecosystem_sub_class_name(self):
+        return self.sub_ecosystem_sub_class.name
     
     
     def delete(self):

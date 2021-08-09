@@ -2,8 +2,8 @@ from rest_framework.decorators import api_view, authentication_classes, permissi
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import exceptions, status
-from .models import EcoSystem, Organization, Sector, SubEcosystem
-from .serializers import EcosystemSerializer, FileUploadSerializer, OrganizationSerializer, SectorSerializer, SubecosystemSerializer
+from .models import EcoSystem, Organization, Sector, SubEcosystem, SubecosystemSubclass
+from .serializers import EcosystemSerializer, FileUploadSerializer, OrganizationSerializer, SectorSerializer, SubecosystemSerializer, SubecosystemSubclassSerializer
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 import cloudinary
 import cloudinary.uploader
@@ -44,24 +44,8 @@ def add_organization(request):
 
         if serializer.is_valid():
             try:
-
-                if serializer.validated_data['company_logo'] is not None:
-                #upload the company's logo
-                    company_logo = serializer.validated_data['company_logo'] #get the image file from the request 
-                    img1 = cloudinary.uploader.upload(company_logo, folder = 'fitila/company_logo/') #upload the image to cloudinary
-                    serializer.validated_data['company_logo'] = "" #delete the image file
-                    serializer.validated_data['company_logo_url'] = img1['secure_url'] #save the image url 
-                else: 
-                    data = {
-                    'status'  : False,
-                    'message' : "Unsuccessful",
-                    'error' : ["Company logo is required"],
-                    }
-
-                    return Response(data, status = status.HTTP_400_BAD_REQUEST)
-
-                if serializer.validated_data['ceo_image'] is not None:
-                # upload the ceo's image
+                if serializer.validated_data['ceo_image']:
+                    # upload the ceo's image
                     ceo_image = serializer.validated_data['ceo_image'] #get the image file from the request 
                     img2 = cloudinary.uploader.upload(ceo_image, folder = 'fitila/ceo_image/') #upload the image to cloudinary
                     serializer.validated_data['ceo_image'] = "" #delete the image file
@@ -74,6 +58,16 @@ def add_organization(request):
                     }
 
                     return Response(data, status = status.HTTP_400_BAD_REQUEST)
+                
+                if serializer.validated_data['company_logo']:
+                #upload the company's logo
+                    company_logo = serializer.validated_data['company_logo'] #get the image file from the request 
+                    img1 = cloudinary.uploader.upload(company_logo, folder = 'fitila/company_logo/') #upload the image to cloudinary
+                    serializer.validated_data['company_logo'] = "" #delete the image file
+                    serializer.validated_data['company_logo_url'] = img1['secure_url'] #save the image url 
+                
+
+                
             except Exception:
                 data = {
                     'status'  : False,
@@ -461,7 +455,7 @@ def sector(request):
             obj = Sector.objects.create(**serializer.validated_data)
             obj.save()
 
-            serializer = EcosystemSerializer(obj)
+            serializer = SectorSerializer(obj)
             data = {
                 'status'  : True,
                 'message' : "Successful",
@@ -544,6 +538,118 @@ def sector_detail(request, pk):
             }
 
         return Response(data, status = status.HTTP_204_NO_CONTENT)  
+    
+    
+@swagger_auto_schema(methods=['POST'], request_body=SubecosystemSubclassSerializer())
+@api_view(['GET', 'POST'])
+# @authentication_classes([JSONWebTokenAuthentication])
+# @permission_classes([IsAuthenticated])
+def subclass(request):
+    
+    if request.method == 'GET':
+        obj = SubecosystemSubclass.objects.filter(is_active=True)
+    
+        serializer = SubecosystemSubclassSerializer(obj, many =True)
+
+        data = {
+                'status'  : True,
+                'message' : "Successful",
+                'data' : serializer.data,
+            }
+
+        return Response(data, status=status.HTTP_200_OK)
+
+
+    elif request.method == 'POST':
+        
+        serializer = SubecosystemSubclassSerializer(data = request.data)
+        
+        if serializer.is_valid():
+        
+            serializer.save()
+            data = {
+                'status'  : True,
+                'message' : "Successful",
+                'data' : serializer.data,
+            }
+
+            return Response(data, status = status.HTTP_201_CREATED)
+
+        else:
+            data = {
+                'status'  : False,
+                'message' : "Unsuccessful",
+                'error' : serializer.errors,
+            }
+
+            return Response(data, status = status.HTTP_400_BAD_REQUEST)
+
+
+@swagger_auto_schema(methods=['PUT'], request_body=SubecosystemSubclassSerializer())
+@api_view(['GET', 'PUT', 'DELETE']) 
+# @authentication_classes([JSONWebTokenAuthentication])
+# @permission_classes([IsAuthenticated])
+def subclass_detail(request, pk):
+    try:
+        obj =  SubecosystemSubclass.objects.get(pk = pk, is_active=True)
+    
+    except SubecosystemSubclass.DoesNotExist:
+        data = {
+                'status'  : False,
+                'error' : "Does not exist"
+            }
+
+        return Response(data, status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'GET':
+        serializer = SubecosystemSubclassSerializer(obj)
+        
+        data = {
+                'status'  : True,
+                'message' : "Successful",
+                'data' : serializer.data,
+            }
+
+        return Response(data, status=status.HTTP_200_OK)
+
+    #Update the item
+    elif request.method == 'PUT':
+        serializer = SubecosystemSubclassSerializer(obj, data = request.data, partial=True) #allows you to be able to update one field of the model
+
+        if serializer.is_valid():
+
+
+            serializer.save()
+
+            data = {
+                'status'  : True,
+                'message' : "Successful",
+                'data' : serializer.data,
+            }
+
+            return Response(data, status = status.HTTP_201_CREATED)
+
+        else:
+            data = {
+                'status'  : False,
+                'message' : "Unsuccessful",
+                'error' : serializer.errors,
+            }
+
+            return Response(data, status = status.HTTP_400_BAD_REQUEST)
+
+    #de-activate the item
+    elif request.method == 'DELETE':
+        
+        obj.delete()
+        
+        data = {
+                'status'  : True,
+                'message' : "Deleted Successfully"
+            }
+
+        return Response(data, status = status.HTTP_204_NO_CONTENT)  
+
 
 
 @api_view(['GET'])
