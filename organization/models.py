@@ -23,7 +23,7 @@ class EcoSystem(models.Model):
                                                 "ceo_name":x.ceo_name,
                                                 "state":x.state, 
                                                 "sector":x.sector.name,
-                                                "sub_ecosystem_sub_class":x.sub_ecosystem_sub_class,
+                                                "sub_ecosystem_sub_class":x.sub_ecosystem_sub_class.name,
                                                 "employee" :x.num_of_employees, "funding":x.funding
                                                 },object.organizations.all().filter(is_active=True).filter(is_approved=True)))
             }, sub))
