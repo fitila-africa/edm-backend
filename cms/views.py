@@ -4,7 +4,7 @@ from rest_framework.decorators import api_view, authentication_classes, permissi
 from . models import *
 from . serializers import *
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
-from rest_framework_jwt.authentication import JSONWebTokenAuthentication
+from rest_framework_simplejwt.authentication import JWTAuthentication
 from drf_yasg.utils import swagger_auto_schema
 # Create your views here.
 
@@ -33,7 +33,7 @@ from drf_yasg.utils import swagger_auto_schema
 
 @swagger_auto_schema(method='post', request_body=FAQSerializer())
 @api_view(['GET', 'POST'])
-@authentication_classes([JSONWebTokenAuthentication])
+@authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticatedOrReadOnly])
 def faq(request):
     if request.method == 'GET':
@@ -76,7 +76,7 @@ def faq(request):
 
 @swagger_auto_schema(method='put', request_body=FAQSerializer())
 @api_view(['GET', 'PUT', 'DELETE']) 
-@authentication_classes([JSONWebTokenAuthentication])
+@authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
 def faq_detail(request, faq_id):
     try:

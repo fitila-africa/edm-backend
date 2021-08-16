@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework import exceptions, status
 from .models import EcoSystem, Organization, Sector, SubEcosystem, SubecosystemSubclass
 from .serializers import EcosystemSerializer, FileUploadSerializer, OrganizationSerializer, SectorSerializer, SubecosystemSerializer, SubecosystemSubclassSerializer
-from rest_framework_jwt.authentication import JSONWebTokenAuthentication
+from rest_framework_simplejwt.authentication import JWTAuthentication
 import cloudinary
 import cloudinary.uploader
 from drf_yasg.utils import swagger_auto_schema
@@ -15,7 +15,7 @@ from .populate import process_data
 
 
 @api_view(['GET'])
-# @authentication_classes([JSONWebTokenAuthentication])
+# @authentication_classes([JWTAuthentication])
 # @permission_classes([IsAuthenticated])
 def organizations(request):
     
@@ -34,7 +34,7 @@ def organizations(request):
 
 @swagger_auto_schema(methods=['POST'], request_body=OrganizationSerializer())
 @api_view(['POST'])
-# @authentication_classes([JSONWebTokenAuthentication])
+# @authentication_classes([JWTAuthentication])
 # @permission_classes([IsAuthenticated])
 def add_organization(request):
 
@@ -99,7 +99,7 @@ def add_organization(request):
 
 @swagger_auto_schema(methods=['PUT', 'DELETE'], request_body=OrganizationSerializer())
 @api_view(['GET', 'PUT', 'DELETE']) 
-# @authentication_classes([JSONWebTokenAuthentication])
+# @authentication_classes([JWTAuthentication])
 # @permission_classes([IsAuthenticated])
 def organization_detail(request, pk):
     try:
@@ -202,7 +202,7 @@ def pending_organizations(request):
 
 @swagger_auto_schema(methods=['POST'], request_body=EcosystemSerializer())
 @api_view(['GET', 'POST'])
-# @authentication_classes([JSONWebTokenAuthentication])
+# @authentication_classes([JWTAuthentication])
 # @permission_classes([IsAuthenticated])
 def ecosystem(request):
     
@@ -250,7 +250,7 @@ def ecosystem(request):
 
 @swagger_auto_schema(methods=['PUT', 'DELETE'], request_body=EcosystemSerializer())
 @api_view(['GET', 'PUT', 'DELETE']) 
-# @authentication_classes([JSONWebTokenAuthentication])
+# @authentication_classes([JWTAuthentication])
 # @permission_classes([IsAuthenticated])
 def ecosystem_detail(request, pk):
     try:
@@ -316,7 +316,7 @@ def ecosystem_detail(request, pk):
 
 @swagger_auto_schema(methods=['POST'], request_body=SubecosystemSerializer())
 @api_view(['GET', 'POST'])
-# @authentication_classes([JSONWebTokenAuthentication])
+# @authentication_classes([JWTAuthentication])
 # @permission_classes([IsAuthenticated])
 def sub_ecosystem(request):
     
@@ -363,7 +363,7 @@ def sub_ecosystem(request):
 
 @swagger_auto_schema(methods=['PUT'], request_body=SubecosystemSerializer())
 @api_view(['GET', 'PUT', 'DELETE']) 
-# @authentication_classes([JSONWebTokenAuthentication])
+# @authentication_classes([JWTAuthentication])
 # @permission_classes([IsAuthenticated])
 def sub_ecosystem_detail(request, pk):
     try:
@@ -428,7 +428,7 @@ def sub_ecosystem_detail(request, pk):
 
 @swagger_auto_schema(methods=['POST'], request_body=SectorSerializer())
 @api_view(['GET', 'POST'])
-# @authentication_classes([JSONWebTokenAuthentication])
+# @authentication_classes([JWTAuthentication])
 # @permission_classes([IsAuthenticated])
 def sector(request):
     
@@ -476,7 +476,7 @@ def sector(request):
 
 @swagger_auto_schema(methods=['PUT'], request_body=SectorSerializer())
 @api_view(['GET', 'PUT', 'DELETE']) 
-# @authentication_classes([JSONWebTokenAuthentication])
+# @authentication_classes([JWTAuthentication])
 # @permission_classes([IsAuthenticated])
 def sector_detail(request, pk):
     try:
@@ -542,7 +542,7 @@ def sector_detail(request, pk):
     
 @swagger_auto_schema(methods=['POST'], request_body=SubecosystemSubclassSerializer())
 @api_view(['GET', 'POST'])
-# @authentication_classes([JSONWebTokenAuthentication])
+# @authentication_classes([JWTAuthentication])
 # @permission_classes([IsAuthenticated])
 def subclass(request):
     
@@ -587,7 +587,7 @@ def subclass(request):
 
 @swagger_auto_schema(methods=['PUT'], request_body=SubecosystemSubclassSerializer())
 @api_view(['GET', 'PUT', 'DELETE']) 
-# @authentication_classes([JSONWebTokenAuthentication])
+# @authentication_classes([JWTAuthentication])
 # @permission_classes([IsAuthenticated])
 def subclass_detail(request, pk):
     try:

@@ -1,6 +1,6 @@
-from account.views import get_user
 from django.urls import path
 from account import views
+from rest_framework_simplejwt.views import TokenRefreshView
 
 app_name = 'account'
 
@@ -14,5 +14,6 @@ urlpatterns = [
 
     #user login
     path('auth/', views.user_login),
+    path('auth/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 
 ]

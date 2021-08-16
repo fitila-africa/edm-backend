@@ -6,11 +6,11 @@ from rest_framework import status
 from .models import User
 from .serializers import UserSerializer
 from django.contrib.auth.hashers import make_password
-from rest_framework_jwt.authentication import JSONWebTokenAuthentication
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework_simplejwt.tokens import RefreshToken
 
 from django.contrib.auth import authenticate
-from rest_framework_jwt.utils import jwt_payload_handler, jwt
-from django.conf import settings
+
 from django.contrib.auth.signals import user_logged_in
 
 import cloudinary
@@ -20,7 +20,7 @@ from drf_yasg.utils import swagger_auto_schema
 
 @swagger_auto_schema(methods=['POST'], request_body=UserSerializer())
 @api_view(['POST'])
-# @authentication_classes([JSONWebTokenAuthentication])
+# @authentication_classes([JWTAuthentication])
 # @permission_classes([IsAuthenticated])
 def add_user(request):
 
@@ -62,8 +62,8 @@ def add_user(request):
 
 @swagger_auto_schema(methods=['POST'], request_body=UserSerializer())
 @api_view(['POST'])
-@authentication_classes([JSONWebTokenAuthentication])
-@permission_classes([IsAuthenticated])
+# @authentication_classes([JWTAuthentication])
+# @permission_classes([IsAuthenticated])
 def add_admin(request):
 
     if request.method == 'POST':
@@ -102,11 +102,11 @@ def add_admin(request):
 
 
 @api_view(['GET'])
-@authentication_classes([JSONWebTokenAuthentication])
+@authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
 def get_user(request):
     if request.method == 'GET':
-        user = User.objects.all().filter(is_active=True)
+        user = User.objects.filter(is_active=True)
     
         
         serializer = UserSerializer(user, many =True)
@@ -123,7 +123,7 @@ def get_user(request):
 
 @swagger_auto_schema(methods=['PUT', 'DELETE'], request_body=UserSerializer())
 @api_view(['GET', 'PUT', 'DELETE'])
-@authentication_classes([JSONWebTokenAuthentication])
+@authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
 def user_detail(request, pk):
     try:
@@ -204,8 +204,9 @@ def user_login(request):
         user = authenticate(request, email = request.data['email'], password = request.data['password'])
         if user is not None and user.is_active==True:
             try:
-                payload = jwt_payload_handler(user)
-                token = jwt.encode(payload, settings.SECRET_KEY)
+                
+                refresh = RefreshToken.for_user(user)
+
                 user_detail = {}
                 user_detail['id']   = user.id
                 user_detail['first_name'] = user.first_name
@@ -213,7 +214,8 @@ def user_login(request):
                 user_detail['email'] = user.email
                 user_detail['role'] = user.role
                 user_detail['is_admin'] = user.is_admin
-                user_detail['token'] = token
+                user_detail['refresh'] = str(refresh)
+                user_detail['access'] = str(refresh.access_token)
                 user_logged_in.send(sender=user.__class__,
                                     request=request, user=user)
 
