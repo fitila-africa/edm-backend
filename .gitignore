@@ -3,5 +3,4 @@ migrations
 *.sqlite3
 Pipfile
 *.vscode
-settings.py
 .env
