@@ -4,3 +4,4 @@ migrations
 Pipfile
 *.vscode
 settings.py
+.env

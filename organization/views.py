@@ -44,7 +44,7 @@ def add_organization(request):
 
         if serializer.is_valid():
             try:
-                if serializer.validated_data['ceo_image']:
+                if 'ceo_image' in serializer.validated_data.keys() and serializer.validated_data['ceo_image']:
                     # upload the ceo's image
                     ceo_image = serializer.validated_data['ceo_image'] #get the image file from the request
                     img1 = cloudinary.uploader.upload(ceo_image, folder = 'fitila/ceo_image/') #upload the image to cloudinary
