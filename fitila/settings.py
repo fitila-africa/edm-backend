@@ -10,14 +10,13 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
-from json import load
 import os
 from dotenv import load_dotenv
 from datetime import timedelta
 import cloudinary
 
-
-
+load_dotenv('/home/fitilla/fitila/fitila/.env')
+# load_dotenv()
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -27,6 +26,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
+
 SECRET_KEY = os.getenv('DJANGO_SECRET')
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -34,7 +34,6 @@ SECRET_KEY = os.getenv('DJANGO_SECRET')
 env = os.getenv('ENV', 'development')
 
 if env == 'production':
-    load_dotenv('/home/fitilla/fitila/fitila/.env')
     
     DEBUG = bool(0)
     
@@ -52,7 +51,6 @@ if env == 'production':
     
     
 else:
-    load_dotenv()
     
     DEBUG=bool(1)
     ALLOWED_HOSTS=[]
