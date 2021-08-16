@@ -69,6 +69,7 @@ def add_organization(request):
 
                 
             except Exception:
+                print(Exception)
                 data = {
                     'status'  : False,
                     'message' : "Unsuccessful",
