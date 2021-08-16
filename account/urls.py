@@ -7,10 +7,10 @@ app_name = 'account'
 urlpatterns = [
 
     #users
-    path('add_user/', views.add_user),
-    path('add_admin/', views.add_admin),
-    path('get_user/', views.get_user),
-    path('user/<int:pk>', views.user_detail),
+    path('user/add_user/', views.add_user),
+    path('user/add_admin/', views.add_admin),
+    path('user/all_users/', views.get_user),
+    path('user/profile/', views.user_detail),
 
     #user login
     path('auth/', views.user_login),

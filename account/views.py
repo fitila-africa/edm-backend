@@ -125,9 +125,9 @@ def get_user(request):
 @api_view(['GET', 'PUT', 'DELETE'])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
-def user_detail(request, pk):
+def user_detail(request):
     try:
-        user = User.objects.get(pk = pk)
+        user = User.objects.get(id = request.user.id, is_active=True)
     
     except User.DoesNotExist:
         data = {
@@ -188,6 +188,8 @@ def user_detail(request, pk):
             }
 
         return Response(data, status = status.HTTP_204_NO_CONTENT)
+
+
 
 @swagger_auto_schema(method='post', request_body=openapi.Schema(
     type=openapi.TYPE_OBJECT, 
