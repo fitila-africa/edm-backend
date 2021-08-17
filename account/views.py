@@ -1,28 +1,33 @@
+from organization.serializers import OrganizationSerializer
 from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
+
+
 from rest_framework.decorators import api_view, authentication_classes, permission_classes 
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
 from rest_framework import status
+
 from .models import User
 from .serializers import UserSerializer
-from django.contrib.auth.hashers import make_password
+from .permissions import IsAdminOrReadOnly, IsAdminUser_Custom
+
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from django.contrib.auth import authenticate
-
+from django.contrib.auth.hashers import make_password
 from django.contrib.auth.signals import user_logged_in
 
 import cloudinary
 import cloudinary.uploader
-from drf_yasg.utils import swagger_auto_schema
 
 
 @swagger_auto_schema(methods=['POST'], request_body=UserSerializer())
 @api_view(['POST'])
-# @authentication_classes([JWTAuthentication])
-# @permission_classes([IsAuthenticated])
 def add_user(request):
+    
+    """ Allows the user to be able to sign up on the platform """
 
     if request.method == 'POST':
         
@@ -62,9 +67,11 @@ def add_user(request):
 
 @swagger_auto_schema(methods=['POST'], request_body=UserSerializer())
 @api_view(['POST'])
-# @authentication_classes([JWTAuthentication])
-# @permission_classes([IsAuthenticated])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAdminUser])
 def add_admin(request):
+    
+    """Allows a super admin to create an admin. The superadmin status is defined by an "is_staff" field set in the models."""
 
     if request.method == 'POST':
         
@@ -72,7 +79,6 @@ def add_admin(request):
         
         if serializer.is_valid():
 
-            
             
             #hash password
             serializer.validated_data['password'] = make_password(serializer.validated_data['password']) #hash the given password
@@ -103,8 +109,10 @@ def add_admin(request):
 
 @api_view(['GET'])
 @authentication_classes([JWTAuthentication])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAdminUser_Custom])
 def get_user(request):
+    
+    """Allows the admin to see all users (both admin and normal users) """
     if request.method == 'GET':
         user = User.objects.filter(is_active=True)
     
@@ -126,6 +134,8 @@ def get_user(request):
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
 def user_detail(request):
+    """Allows the logged in user to view their profile, edit or deactivate account. Do not use this view for changing password or resetting password"""
+    
     try:
         user = User.objects.get(id = request.user.id, is_active=True)
     
@@ -150,13 +160,9 @@ def user_detail(request):
 
     #Update the profile of the user
     elif request.method == 'PUT':
-        serializer = UserSerializer(user, data = request.data, partial=True) #allows you to be able to update one field of the model
+        serializer = UserSerializer(user, data = request.data, partial=True) 
 
         if serializer.is_valid():
-            
-            #check if it's password change and hash the new password
-            if "password" in serializer.validated_data.keys():
-                serializer.validated_data['password'] = make_password(serializer.validated_data['password'])
         
             serializer.save()
 
@@ -188,6 +194,47 @@ def user_detail(request):
             }
 
         return Response(data, status = status.HTTP_204_NO_CONTENT)
+    
+
+@api_view(['GET', 'DELETE'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAdminUser_Custom])
+def get_user_detail(request, user_id):
+    """Allows the admin to view user profile or deactivate user's account. """
+    try:
+        user = User.objects.get(id = user_id, is_active=True)
+    
+    except User.DoesNotExist:
+        data = {
+                'status'  : False,
+                'message' : "Does not exist"
+            }
+
+        return Response(data, status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'GET':
+        serializer = UserSerializer(user)
+        
+        data = {
+                'status'  : True,
+                'message' : "Successful",
+                'data' : serializer.data,
+            }
+
+        return Response(data, status=status.HTTP_200_OK)
+
+    #delete the account
+    elif request.method == 'DELETE':
+        user.is_active = False
+        user.save()
+
+        data = {
+                'status'  : True,
+                'message' : "Deleted Successfully"
+            }
+
+        return Response(data, status = status.HTTP_204_NO_CONTENT)
+
 
 
 
@@ -200,6 +247,8 @@ def user_detail(request):
 ))
 @api_view([ 'POST'])
 def user_login(request):
+    
+    """Allows users to log in to the platform. Sends the jwt refresh and access tokens. Check settings for token life time."""
     
     if request.method == "POST":
         
@@ -238,3 +287,8 @@ def user_login(request):
                 'error': 'Please provide a valid email and a password'
                 }
             return Response(data, status=status.HTTP_401_UNAUTHORIZED)
+        
+        
+        
+def change_password(request):
+    """Allows users to edit password when logged in."""
