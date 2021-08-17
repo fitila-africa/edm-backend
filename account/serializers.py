@@ -15,4 +15,12 @@ class ChangePasswordSerializer(serializers.Serializer):
     confirm_password  = serializers.CharField(max_length=200)
     
     
+    def check_pass(self):
+        """ checks if both passwords are the same """
+        if self.validated_data['new_password'] != self.validated_data['confirm_password']:
+            raise serializers.ValidationError({"error":"Please enter matching passwords"})
+        return True
+            
+        
+    
     

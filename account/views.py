@@ -9,14 +9,14 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from .models import User
-from .serializers import UserSerializer
+from .serializers import ChangePasswordSerializer, UserSerializer
 from .permissions import IsAdminOrReadOnly, IsAdminUser_Custom
 
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from django.contrib.auth import authenticate
-from django.contrib.auth.hashers import make_password
+from django.contrib.auth.hashers import make_password, check_password
 from django.contrib.auth.signals import user_logged_in
 
 import cloudinary
@@ -289,6 +289,48 @@ def user_login(request):
             return Response(data, status=status.HTTP_401_UNAUTHORIZED)
         
         
-        
-def change_password(request):
+@swagger_auto_schema(methods=['POST'], request_body=ChangePasswordSerializer())
+@api_view(['POST'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])   
+def reset_password(request):
     """Allows users to edit password when logged in."""
+    user = request.user
+    if request.method == 'POST':
+        serializer = ChangePasswordSerializer(data = request.data)
+        if serializer.is_valid():
+            if check_password(serializer.validated_data['old_password'], user.password):
+                if serializer.check_pass():
+                    user.set_password(serializer.validated_data['new_password'])
+                    user.save()
+                    
+                    data = {
+                        'status'  : True,
+                        'message': "Successfully saved password"
+                        }
+                    return Response(data, status=status.HTTP_202_ACCEPTED) 
+                else:
+                    
+                    data = {
+                        'status'  : False,
+                        'error': "Please enter matching passwords"
+                        }
+                    return Response(data, status=status.HTTP_400_BAD_REQUEST)   
+        
+            else:
+                
+                data = {
+                    'status'  : False,
+                    'error': "Incorrect password"
+                    }
+                return Response(data, status=status.HTTP_401_UNAUTHORIZED)   
+        
+            
+        else:
+            
+            data = {
+                'status'  : False,
+                'error': serializer.errors
+                }
+            return Response(data, status=status.HTTP_400_BAD_REQUEST)   
+        

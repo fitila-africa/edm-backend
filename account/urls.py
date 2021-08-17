@@ -11,7 +11,10 @@ urlpatterns = [
     path('user/add_admin/', views.add_admin),
     path('user/all_users/', views.get_user),
     path('user/profile/', views.user_detail),
+    path('user/reset_password/', views.reset_password),
+
     path('user/<int:user_id>/', views.get_user_detail),
+    
 
     #user login
     path('auth/', views.user_login),
