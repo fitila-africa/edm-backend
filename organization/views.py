@@ -1,5 +1,5 @@
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework import exceptions, status
 from .models import EcoSystem, Organization, Sector, SubEcosystem, SubecosystemSubclass
@@ -16,7 +16,7 @@ from .populate import process_data
 @swagger_auto_schema(methods=['POST'], request_body=OrganizationSerializer())
 @api_view(['GET', 'POST'])
 @authentication_classes([JWTAuthentication])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticatedOrReadOnly])
 def organizations(request):
     
     """Api view for adding and viewing all organizations. """
@@ -97,7 +97,7 @@ def organizations(request):
 @swagger_auto_schema(methods=['PUT', 'DELETE'], request_body=OrganizationSerializer())
 @api_view(['GET', 'PUT', 'DELETE'])
 @authentication_classes([JWTAuthentication])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticatedOrReadOnly])
 def organization_detail(request, pk):
     try:
         organization =  Organization.objects.get(pk = pk, is_active =True)
@@ -653,7 +653,7 @@ def subclass_detail(request, pk):
 
 @api_view(['GET'])
 @authentication_classes([JWTAuthentication])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticatedOrReadOnly])
 def state(request):
 
     state = Organization.objects.values('state').distinct()
