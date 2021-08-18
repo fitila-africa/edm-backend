@@ -12,7 +12,6 @@ from drf_yasg.utils import swagger_auto_schema
 
 from .populate import process_data
 
-# Create your views here.
 
 @swagger_auto_schema(methods=['POST'], request_body=OrganizationSerializer())
 @api_view(['GET', 'POST'])
