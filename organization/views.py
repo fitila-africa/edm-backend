@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from rest_framework import exceptions, status
 from .models import EcoSystem, Organization, Sector, SubEcosystem, SubecosystemSubclass
 from .serializers import EcosystemSerializer, FileUploadSerializer, OrganizationSerializer, SectorSerializer, SubecosystemSerializer, SubecosystemSubclassSerializer
+from account.permissions import IsAdminOrReadOnly, IsAdminUser_Custom
 from rest_framework_simplejwt.authentication import JWTAuthentication
 import cloudinary
 import cloudinary.uploader
@@ -13,14 +14,16 @@ from .populate import process_data
 
 # Create your views here.
 
-
-@api_view(['GET'])
-# @authentication_classes([JWTAuthentication])
-# @permission_classes([IsAuthenticated])
+@swagger_auto_schema(methods=['POST'], request_body=OrganizationSerializer())
+@api_view(['GET', 'POST'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def organizations(request):
+    
+    """Api view for adding and viewing all organizations. """
 
     if request.method == 'GET':
-        organization = Organization.objects.all().filter(is_active=True).filter(is_approved=True)
+        organization = Organization.objects.filter(is_active=True).filter(is_approved=True)
 
         serializer = OrganizationSerializer(organization, many =True)
 
@@ -32,13 +35,7 @@ def organizations(request):
 
         return Response(data, status=status.HTTP_200_OK)
 
-@swagger_auto_schema(methods=['POST'], request_body=OrganizationSerializer())
-@api_view(['POST'])
-# @authentication_classes([JWTAuthentication])
-# @permission_classes([IsAuthenticated])
-def add_organization(request):
-
-    if request.method == 'POST':
+    elif request.method == 'POST':
 
         serializer = OrganizationSerializer(data = request.data)
 
@@ -77,7 +74,7 @@ def add_organization(request):
                 }
                 return Response(data, status = status.HTTP_400_BAD_REQUEST)
 
-            organization = Organization.objects.create(**serializer.validated_data)
+            organization = Organization.objects.create(**serializer.validated_data, user=request.user)
 
             serializer = OrganizationSerializer(organization)
             data = {
@@ -100,8 +97,8 @@ def add_organization(request):
 
 @swagger_auto_schema(methods=['PUT', 'DELETE'], request_body=OrganizationSerializer())
 @api_view(['GET', 'PUT', 'DELETE'])
-# @authentication_classes([JWTAuthentication])
-# @permission_classes([IsAuthenticated])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def organization_detail(request, pk):
     try:
         organization =  Organization.objects.get(pk = pk, is_active =True)
@@ -132,13 +129,13 @@ def organization_detail(request, pk):
         if serializer.is_valid():
             try:
 
-                if 'ceo_image' in serializer.validated_data.keys():
+                if 'ceo_image' in serializer.validated_data.keys() and serializer.validated_data['ceo_image']:
                     ceo_image = serializer.validated_data['ceo_image'] #get the image file from the request
                     img2 = cloudinary.uploader.upload(ceo_image, folder = 'fitila/ceo_image/') #upload the image to cloudinary
                     serializer.validated_data['ceo_image'] = "" #delete the image file
                     serializer.validated_data['ceo_image_url'] = img2['secure_url'] #save the image url
 
-                if 'company_logo' in serializer.validated_data.keys():
+                if 'company_logo' in serializer.validated_data.keys() and serializer.validated_data['company_logo']:
                     company_logo = serializer.validated_data['company_logo'] #get the image file from the request
                     img1 = cloudinary.uploader.upload(company_logo, folder = 'fitila/company_logo/') #upload the image to cloudinary
                     serializer.validated_data['company_logo'] = "" #delete the image file
@@ -186,6 +183,8 @@ def organization_detail(request, pk):
 
 
 @api_view(['GET'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAdminUser_Custom])
 def pending_organizations(request):
     if request.method == 'GET':
         organization = Organization.objects.all().filter(is_active=True).filter(responded =False)
@@ -203,8 +202,8 @@ def pending_organizations(request):
 
 @swagger_auto_schema(methods=['POST'], request_body=EcosystemSerializer())
 @api_view(['GET', 'POST'])
-# @authentication_classes([JWTAuthentication])
-# @permission_classes([IsAuthenticated])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAdminOrReadOnly])
 def ecosystem(request):
 
     if request.method == 'GET':
@@ -251,8 +250,8 @@ def ecosystem(request):
 
 @swagger_auto_schema(methods=['PUT', 'DELETE'], request_body=EcosystemSerializer())
 @api_view(['GET', 'PUT', 'DELETE'])
-# @authentication_classes([JWTAuthentication])
-# @permission_classes([IsAuthenticated])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAdminUser_Custom])
 def ecosystem_detail(request, pk):
     try:
         eco =  EcoSystem.objects.get(pk = pk, is_active=True)
@@ -317,8 +316,8 @@ def ecosystem_detail(request, pk):
 
 @swagger_auto_schema(methods=['POST'], request_body=SubecosystemSerializer())
 @api_view(['GET', 'POST'])
-# @authentication_classes([JWTAuthentication])
-# @permission_classes([IsAuthenticated])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAdminOrReadOnly])
 def sub_ecosystem(request):
 
     if request.method == 'GET':
@@ -364,8 +363,8 @@ def sub_ecosystem(request):
 
 @swagger_auto_schema(methods=['PUT'], request_body=SubecosystemSerializer())
 @api_view(['GET', 'PUT', 'DELETE'])
-# @authentication_classes([JWTAuthentication])
-# @permission_classes([IsAuthenticated])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAdminUser_Custom])
 def sub_ecosystem_detail(request, pk):
     try:
         eco =  SubEcosystem.objects.get(pk = pk, is_active=True)
@@ -429,8 +428,8 @@ def sub_ecosystem_detail(request, pk):
 
 @swagger_auto_schema(methods=['POST'], request_body=SectorSerializer())
 @api_view(['GET', 'POST'])
-# @authentication_classes([JWTAuthentication])
-# @permission_classes([IsAuthenticated])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAdminOrReadOnly])
 def sector(request):
 
     if request.method == 'GET':
@@ -477,8 +476,8 @@ def sector(request):
 
 @swagger_auto_schema(methods=['PUT'], request_body=SectorSerializer())
 @api_view(['GET', 'PUT', 'DELETE'])
-# @authentication_classes([JWTAuthentication])
-# @permission_classes([IsAuthenticated])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAdminUser_Custom])
 def sector_detail(request, pk):
     try:
         obj =  Sector.objects.get(pk = pk, is_active=True)
@@ -543,8 +542,8 @@ def sector_detail(request, pk):
 
 @swagger_auto_schema(methods=['POST'], request_body=SubecosystemSubclassSerializer())
 @api_view(['GET', 'POST'])
-# @authentication_classes([JWTAuthentication])
-# @permission_classes([IsAuthenticated])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAdminOrReadOnly])
 def subclass(request):
 
     if request.method == 'GET':
@@ -588,8 +587,8 @@ def subclass(request):
 
 @swagger_auto_schema(methods=['PUT'], request_body=SubecosystemSubclassSerializer())
 @api_view(['GET', 'PUT', 'DELETE'])
-# @authentication_classes([JWTAuthentication])
-# @permission_classes([IsAuthenticated])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAdminUser_Custom])
 def subclass_detail(request, pk):
     try:
         obj =  SubecosystemSubclass.objects.get(pk = pk, is_active=True)
@@ -654,6 +653,8 @@ def subclass_detail(request, pk):
 
 
 @api_view(['GET'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def state(request):
 
     state = Organization.objects.values('state').distinct()
@@ -676,6 +677,8 @@ def state(request):
 
 @swagger_auto_schema(methods=['POST'], request_body=FileUploadSerializer())
 @api_view(['POST'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAdminUser_Custom])
 def upload_csv(request):
 
 
@@ -712,7 +715,7 @@ def upload_csv(request):
                     row['ecosystem'] = EcoSystem.objects.get(name = str(row['ecosystem']))
                     row['sub_ecosystem'] = SubEcosystem.objects.get(name = str(row['sub_ecosystem']), ecosystem=row['ecosystem'])
 
-                    Organization.objects.create(**row, is_active=True, is_approved=True, responded=True)
+                    Organization.objects.create(**row, is_active=True, is_approved=True, responded=True, user=request.user)
 
                     success = True
                 except Exception:
@@ -747,6 +750,8 @@ def upload_csv(request):
 
 
 @api_view(['GET'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAdminUser_Custom])
 def approve_org(request, org_id):
 
     try:
@@ -788,6 +793,8 @@ def approve_org(request, org_id):
 
 
 @api_view(['GET'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAdminUser_Custom])
 def reject_org(request, org_id):
 
     try:
@@ -829,6 +836,8 @@ def reject_org(request, org_id):
 
 
 @api_view(['GET'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAdminUser_Custom])
 def rejected_org(request):
     if request.method == 'GET':
         organization = Organization.objects.all().filter(is_active=True).filter(is_declined =True)

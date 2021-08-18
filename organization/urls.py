@@ -10,7 +10,6 @@ urlpatterns = [
    path('organizations/approve/<int:org_id>/', views.approve_org),
    path('organizations/decline/<int:org_id>/', views.reject_org),
    path('organizations/rejected/', views.rejected_org),
-   path('organizations/add/', views.add_organization),
    path('organizations/<int:pk>', views.organization_detail),
    path('ecosystem/', views.ecosystem),
    path('ecosystem/<int:pk>', views.ecosystem_detail),

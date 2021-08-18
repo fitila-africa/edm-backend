@@ -1,3 +1,4 @@
+from account.permissions import IsAdminOrReadOnly, IsAdminUser_Custom
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
@@ -34,8 +35,10 @@ from drf_yasg.utils import swagger_auto_schema
 @swagger_auto_schema(method='post', request_body=FAQSerializer())
 @api_view(['GET', 'POST'])
 @authentication_classes([JWTAuthentication])
-@permission_classes([IsAuthenticatedOrReadOnly])
+@permission_classes([IsAdminOrReadOnly])
 def faq(request):
+    
+    """ Enables only admin users to create new frequently asked questions while others can only view. """
     if request.method == 'GET':
         obj = FAQ.objects.filter(is_active=True)
         serializer = FAQSerializer(obj, many=True)
@@ -77,8 +80,9 @@ def faq(request):
 @swagger_auto_schema(method='put', request_body=FAQSerializer())
 @api_view(['GET', 'PUT', 'DELETE']) 
 @authentication_classes([JWTAuthentication])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAdminUser_Custom])
 def faq_detail(request, faq_id):
+    """ Allows only admin users to edit and delete frequently asked questions. """
     try:
         obj =  FAQ.objects.get(id = faq_id, is_active =True)
     
