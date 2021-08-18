@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 from account import views
 from rest_framework_simplejwt.views import TokenRefreshView
 
@@ -19,5 +19,7 @@ urlpatterns = [
     #user login
     path('auth/', views.user_login),
     path('auth/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    
+    path('user/forget_password/', include('django_rest_passwordreset.urls', namespace='forget_password')),
 
 ]

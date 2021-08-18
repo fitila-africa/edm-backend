@@ -82,7 +82,7 @@ def add_admin(request):
             
             #hash password
             serializer.validated_data['password'] = make_password(serializer.validated_data['password']) #hash the given password
-            user = User.objects.create(**serializer.validated_data, is_admin=True, is_staff=True)
+            user = User.objects.create(**serializer.validated_data, is_admin=True)
             
 
             serializer = UserSerializer(user)

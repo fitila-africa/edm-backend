@@ -77,6 +77,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework_simplejwt',
+    'django_rest_passwordreset',
     'corsheaders',
     'cloudinary',
     'cms',
@@ -204,3 +205,15 @@ SWAGGER_SETTINGS = {
         }
         }
     }
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+EMAIL_HOST = 'smtp.mailgun.org'
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+EMAIL_PORT = 465
+EMAIL_USE_SSL = True    # use port 465
+EMAIL_USE_TLS = False    # use port 587
+
+DEFAULT_FROM_EMAIL = 'admin@edm.com'
