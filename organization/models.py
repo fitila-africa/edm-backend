@@ -18,28 +18,20 @@ class EcoSystem(models.Model):
         return list(map(lambda object: {
             "id":object.id,
             "name":object.name, 
-            "organizations": list(map(lambda x: {"id":x.id,
-                                                "name":x.name, 
-                                                "company_logo_url": x.company_logo_url, "ceo_image_url":x.ceo_image_url, 
-                                                "ceo_name":x.ceo_name,
-                                                "state":x.state, 
-                                                "sector":x.sector.name,
-                                                "sub_ecosystem_sub_class":x.sub_ecosystem_sub_class.name if x.sub_ecosystem_sub_class else "",
-                                                "employee" :x.num_of_employees, "funding":x.funding,
-                                                }, object.organizations.filter(is_active=True).filter(is_approved=True)))
+            "organizations": list(map(lambda x: x.org_dict(), object.organizations.filter(is_active=True, is_approved=True)))
             }, sub))
         
     @property
     def num_of_organization(self):
-        return self.organizations.filter(is_active=True).count()
+        return self.organizations.filter(is_active=True, is_approved=True).count()
     
     @property
     def num_of_states(self):
-        return self.organizations.values('state').distinct().count()
+        return self.organizations.filter(is_active=True, is_approved=True).values('state').distinct().count()
     
     @property
     def num_of_sectors(self):
-        return self.organizations.values('sector').distinct().count()
+        return self.organizations.filter(is_active=True, is_approved=True).values('sector').distinct().count()
     
     def __str__(self):
         return self.name
@@ -62,9 +54,8 @@ class SubEcosystem(models.Model):
 
     @property
     def organization(self):
-        organization =  self.organizations.all().filter(is_active=True).filter(is_approved=True)
-        data = map(lambda object: {"id":object.id,"name":object.name}, organization)
-        return list(data)
+        sub_ecosystem_organization =  self.organizations.filter(is_active=True, is_approved=True)
+        return list(map(lambda x: x.org_dict() ,sub_ecosystem_organization))
     
     def delete(self):
         self.is_active = False
@@ -98,17 +89,9 @@ class Sector(models.Model):
 
     @property
     def organization(self):
-        sector = self.organizations.all().filter(is_active=True).filter(is_approved=True)
+        sector_org = self.organizations.filter(is_active=True, is_approved=True)
 
-        return list(map(lambda x: {"id":x.id,
-                                                "name":x.name, 
-                                                "company_logo_url": x.company_logo_url,
-                                                "ceo_name":x.ceo_name,
-                                             "ceo_image_url":x.ceo_image_url, "state":x.state, 
-                                                "sector":x.sector.name,
-                                                "employee" :x.num_of_employees,
-                                                "funding":x.funding
-                                                },sector))
+        return list(map(lambda x: x.org_dict() ,sector_org))
             
     def __str__(self):
         return self.name
@@ -190,3 +173,54 @@ class Organization(models.Model):
         self.is_active = False
         self.save()
         return 
+    
+    def org_dict(self):
+        
+        return {"id": self.id,
+          "user": self.user.id if self.user else "",
+          "name": self.name,
+          "company_logo": self.company_logo if self.company_logo else "",
+          "company_logo_url": self.company_logo_url,
+          "num_of_employees": self.num_of_employees,
+          "state": self.state,
+          "address": self.address,
+          "ecosystem" : self.ecosystem.id if self.ecosystem else "",
+          "ecosystem_name": self.ecosystem_name if self.ecosystem else "",
+          "sub_ecosystem":self.sub_ecosystem.id if self.sub_ecosystem else "",
+          "sub_ecosystem_name": self.sub_ecosystem_name if self.sub_ecosystem else "",
+          "sub_ecosystem_sub_class":self.sub_ecosystem_sub_class.id if self.sub_ecosystem_sub_class else "",
+          "sub_ecosystem_sub_class_name": self.sub_ecosystem_sub_class_name if self.sub_ecosystem_sub_class else "",
+          "sector":self.sector.id if self.sector else "",
+          "sector_name": self.sector_name if self.sector else "",
+          "business_level": self.business_level,
+          "funding": self.funding,
+          "funding_disbursed_for_support": self.funding_disbursed_for_support,
+          "company_valuation": self.company_valuation,
+          "is_startup": self.is_startup,
+          "num_supported_business": self.num_supported_business,
+          "ceo_name": self.ceo_name,
+          "ceo_gender": self.ceo_gender,
+          "ceo_image":self.ceo_image if self.ceo_image else "",
+          "ceo_image_url": self.ceo_image_url,
+          "website": self.website,
+          "email":self.email,
+          "phone": self.phone,
+          "description":self.description,
+          "head_quarters": self.head_quarters,
+          "facebook":self.facebook,
+          "instagram": self.instagram,
+          "linkedin": self.linkedin,
+          "twitter": self.twitter,
+          "url_1": self.url_1,
+          "url_2": self.url_2,
+          "url_3": self.url_3,
+          "cac_doc": self.cac_doc,
+          "is_entrepreneur": self.is_entrepreneur,
+          "is_ecosystem": self.is_ecosystem,
+          "is_active": self.is_active,
+          "is_approved": self.is_approved,
+          "is_declined": self.is_declined,
+          "date_created": self.date_created,
+          "date_updated": self.date_updated}
+        
+        

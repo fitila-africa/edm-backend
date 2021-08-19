@@ -32,22 +32,8 @@ class User(AbstractBaseUser, PermissionsMixin):
         return self.email
     
     def user_organization(self):
-        organization = self.orgaizations.filter(is_active=True)
-        return list(map(
-            lambda x: {"id":x.id,
-                        "name":x.name, 
-                        "company_logo_url": x.company_logo_url,
-                        "ceo_name":x.ceo_name,
-                        "ceo_image_url":x.ceo_image_url, 
-                        "state":x.state, 
-                        "sector":x.sector.name,
-                        "employee" :x.num_of_employees,
-                        "funding":x.funding,
-                        "is_approved":x.is_approved,
-                        "is_declined":x.is_declined,
-                        'responded':x.responded,
-                        "date_created" : x.date_created
-            },organization
-        )
-    )
+        organization = self.orgaizations.filter(is_active=True,is_approved=True )
+        
+        return list(map(lambda x: x.org_dict() ,organization))
+    
     
