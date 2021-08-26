@@ -1,7 +1,8 @@
-from organization.serializers import OrganizationSerializer
+from rest_framework.exceptions import AuthenticationFailed
+from fitila.settings import SIMPLE_JWT
+
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
-
 
 from rest_framework.decorators import api_view, authentication_classes, permission_classes 
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
@@ -9,11 +10,12 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from .models import User
-from .serializers import ChangePasswordSerializer, UserSerializer
+from .serializers import ChangePasswordSerializer, UserSerializer, CookieTokenRefreshSerializer
 from .permissions import IsAdminOrReadOnly, IsAdminUser_Custom
 
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.views import TokenRefreshView
 
 from django.contrib.auth import authenticate
 from django.contrib.auth.hashers import make_password, check_password
@@ -251,35 +253,41 @@ def user_login(request):
     """Allows users to log in to the platform. Sends the jwt refresh and access tokens. Check settings for token life time."""
     
     if request.method == "POST":
-        
+        provider = 'email'
         user = authenticate(request, email = request.data['email'], password = request.data['password'])
         if user is not None and user.is_active==True:
-            try:
-                
-                refresh = RefreshToken.for_user(user)
+            if user.auth_provider == provider:
+                try:
+                    
+                    refresh = RefreshToken.for_user(user)
 
-                user_detail = {}
-                user_detail['id']   = user.id
-                user_detail['first_name'] = user.first_name
-                user_detail['last_name'] = user.last_name
-                user_detail['email'] = user.email
-                user_detail['role'] = user.role
-                user_detail['is_admin'] = user.is_admin
-                user_detail['refresh'] = str(refresh)
-                user_detail['access'] = str(refresh.access_token)
-                user_logged_in.send(sender=user.__class__,
-                                    request=request, user=user)
+                    user_detail = {}
+                    user_detail['id']   = user.id
+                    user_detail['first_name'] = user.first_name
+                    user_detail['last_name'] = user.last_name
+                    user_detail['email'] = user.email
+                    user_detail['role'] = user.role
+                    user_detail['is_admin'] = user.is_admin
+                    user_detail['access'] = str(refresh.access_token)
+                    user_logged_in.send(sender=user.__class__,
+                                        request=request, user=user)
 
-                data = {
-                'status'  : True,
-                'message' : "Successful",
-                'data' : user_detail,
-                }
-                return Response(data, status=status.HTTP_200_OK)
+                    data = {
+                    'status'  : True,
+                    'message' : "Successful",
+                    'data' : user_detail,
+                    }
+                    res =  Response(data, status=status.HTTP_200_OK)
+                    cookie_max_age = 120 * 60 * 60 #5 days
+                    res.set_cookie('refresh', refresh, httponly=True, expires=SIMPLE_JWT.get('REFRESH_TOKEN_LIFETIME'), max_age=cookie_max_age, samesite='Lax')
+                    
+                    return res
 
-
-            except Exception as e:
-                raise e
+                except Exception as e:
+                    raise e
+            else:
+                raise AuthenticationFailed(
+                detail='Please continue your login using ' + user.auth_provider)
 
         else:
             data = {
@@ -334,3 +342,33 @@ def reset_password(request):
                 }
             return Response(data, status=status.HTTP_400_BAD_REQUEST)   
         
+
+
+class CookieTokenRefreshView(TokenRefreshView):
+    def finalize_response(self, request, response, *args, **kwargs):
+        if response.data.get('refresh'):
+            cookie_max_age = 120 * 60 * 60 # 5 days
+            response.set_cookie('refresh', response.data['refresh'], max_age=cookie_max_age, httponly=True)
+            del response.data['refresh']
+        return super().finalize_response(request, response, *args, **kwargs)
+    serializer_class = CookieTokenRefreshSerializer
+    
+    
+
+@api_view(['GET'])
+# @authentication_classes([JWTAuthentication])
+# @permission_classes([IsAuthenticated])
+def logout_view(request):
+        try:
+            refresh_token = request.COOKIES.get('refresh')
+            token = RefreshToken(refresh_token)
+            token.blacklist()
+
+            res = Response(status=status.HTTP_205_RESET_CONTENT)
+            res.delete_cookie('refresh')
+            return res
+        except Exception as e:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+    

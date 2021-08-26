@@ -15,8 +15,8 @@ from dotenv import load_dotenv
 from datetime import timedelta
 import cloudinary
 
-load_dotenv('/home/fitilla/fitila/fitila/.env')
-# load_dotenv()
+# load_dotenv('/home/fitilla/fitila/fitila/.env')
+load_dotenv()
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -67,6 +67,8 @@ else:
 # Application definition
 
 INSTALLED_APPS = [
+    'social_auth.apps.SocialAuthConfig',
+    'cms.apps.CmsConfig',
     'account.apps.AccountConfig',
     'organization.apps.OrganizationConfig',
     'django.contrib.admin',
@@ -75,15 +77,21 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'debug_toolbar',
     'rest_framework',
     'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist',
     'django_rest_passwordreset',
     'corsheaders',
     'cloudinary',
-    'cms',
+    
+    #docs
     'drf_yasg',
-    'coreapi'
+    'coreapi',
+    
 ]
+
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -94,7 +102,13 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
+
+# #debug
+# INTERNAL_IPS = [
+#     '127.0.0.1',
+# ]
 
 ROOT_URLCONF = 'fitila.urls'
 
@@ -165,23 +179,34 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
-#user
+#user and authentication
 AUTH_USER_MODEL = 'account.User'
 
-#User Authentication
+
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
     'account.authentication.UserAuthBackend'
 ]
 
 
+SOCIAL_AUTH_FACEBOOK_KEY = os.getenv('SOCIAL_AUTH_FACEBOOK_KEY')
+SOCIAL_AUTH_FACEBOOK_SECRET = os.getenv('SOCIAL_AUTH_FACEBOOK_SECRET')
+SOCIAL_AUTH_FACEBOOK_SCOPE = ['email', ]
+
+GOOGLE_CLIENT_ID=os.getenv('GOOGLE_CLIENT_ID')
+GOOGLE_CLIENT_SECRET=os.getenv('GOOGLE_SECRET')
+
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(days=2),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=5),
     'UPDATE_LAST_LOGIN': True,
     'SIGNING_KEY': SECRET_KEY,
     'AUTH_HEADER_TYPES': ('Bearer',),
     'AUTH_HEADER_NAME': 'HTTP_AUTHORIZATION',
+    'AUTH_COOKIE_SAMESITE': 'Lax',
+    'ROTATE_REFRESH_TOKENS': True,
+    'BLACKLIST_AFTER_ROTATION': True,
+    
 
 }
 
@@ -196,6 +221,8 @@ cloudinary.config(
     api_secret = os.getenv('CLOUD_API_SECRET')
 )
 
+
+#swagger documentation
 SWAGGER_SETTINGS = {
     'SECURITY_DEFINITIONS': {
         'Bearer': {
@@ -207,6 +234,7 @@ SWAGGER_SETTINGS = {
     }
 
 
+# emails 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 EMAIL_HOST = 'smtp.mailgun.org'
@@ -217,3 +245,20 @@ EMAIL_USE_SSL = True    # use port 465
 EMAIL_USE_TLS = False    # use port 587
 
 DEFAULT_FROM_EMAIL = 'admin@edm.com'
+
+
+#caching
+SESSIONS_ENGINE='django.contrib.sessions.backends.cache'
+
+
+CACHES = {
+   'default': {
+      'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+      'LOCATION': '127.0.0.1:11211',
+   }
+}
+
+
+
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE =  True

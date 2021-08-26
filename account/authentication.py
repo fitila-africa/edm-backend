@@ -1,10 +1,13 @@
-"""
-My custom authentication
-Authenticate using an e-mail address.
-"""
-from .models import User
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 class UserAuthBackend(object):
+    """
+        My custom authentication
+        Authenticate using an e-mail address.
+    """
+
 
     def authenticate(self, request, email=None, password=None):
         try:
@@ -21,5 +24,3 @@ class UserAuthBackend(object):
             return User.objects.get(pk=member_id)
         except User.DoesNotExist:
             return None
-
-

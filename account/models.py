@@ -6,6 +6,11 @@ from django.contrib.auth.base_user import AbstractBaseUser
 from django.utils.translation import ugettext_lazy as _
 from .managers import UserManager
 
+
+AUTH_PROVIDERS = {'facebook': 'facebook', 
+                  'google': 'google',  
+                  'email': 'email'}
+
 class User(AbstractBaseUser, PermissionsMixin):
     first_name          = models.CharField(_('first name'),max_length = 250)
     last_name          = models.CharField(_('last name'),max_length = 250)
@@ -19,6 +24,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_admin    = models.BooleanField(_('admin'), default=False)
     is_superuser    = models.BooleanField(_('superuser'), default=False)
     date_joined   = models.DateTimeField(_('date joined'), auto_now_add=True)
+    auth_provider = models.CharField(
+        max_length=255, blank=False,
+        null=False, default=AUTH_PROVIDERS.get('email'))
     
     objects = UserManager()
 

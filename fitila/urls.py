@@ -19,7 +19,8 @@ from rest_framework import permissions # new
 from drf_yasg.views import get_schema_view # new
 from drf_yasg import openapi # new
 from rest_framework.schemas.openapi import SchemaGenerator
-
+import debug_toolbar
+from . import settings
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -36,9 +37,19 @@ schema_view = get_schema_view(
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    
+    #my apps
     path('api/v1/account/', include('account.urls', namespace = 'account')),
     path('api/v1/', include('organization.urls', namespace = 'organization')), 
     path('api/v1/cms/', include('cms.urls')), 
+    
+    #documentation
     path('', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('docs/redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 ]
+
+
+if settings.DEBUG:
+    urlpatterns = [
+    path('__debug__/', include(debug_toolbar.urls)),
+    ] + urlpatterns

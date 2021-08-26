@@ -18,8 +18,14 @@ urlpatterns = [
 
     #user login
     path('auth/', views.user_login),
-    path('auth/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('auth/token/refresh/', views.CookieTokenRefreshView.as_view(), name='token_refresh'),
+    
+    #social auth 
+    path('auth/social/', include('social_auth.urls'), name="social-login" ),
     
     path('user/forget_password/', include('django_rest_passwordreset.urls', namespace='forget_password')),
+    
+    path('auth/logout/', views.logout_view, name='logout'),
 
 ]
+

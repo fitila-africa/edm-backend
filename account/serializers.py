@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from .models import User
-# from django.contrib.auth.hashers import check_password
+from rest_framework_simplejwt.serializers import TokenRefreshSerializer
+from rest_framework_simplejwt.exceptions import InvalidToken 
+
 class UserSerializer(serializers.ModelSerializer):
     user_organization = serializers.ReadOnlyField()
     class Meta:
@@ -23,4 +25,13 @@ class ChangePasswordSerializer(serializers.Serializer):
             
         
     
-    
+
+
+class CookieTokenRefreshSerializer(TokenRefreshSerializer):
+    refresh = None
+    def validate(self, attrs):
+        attrs['refresh'] = self.context['request'].COOKIES.get('refresh')
+        if attrs['refresh']:
+            return super().validate(attrs)
+        else:
+            raise InvalidToken('No valid token found in cookie \'refresh_token\'')

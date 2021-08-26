@@ -1,3 +1,4 @@
+from django.views.decorators.cache import cache_page
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
@@ -12,7 +13,7 @@ from drf_yasg.utils import swagger_auto_schema
 
 from .populate import process_data
 
-
+@cache_page(60 * 6)
 @swagger_auto_schema(methods=['POST'], request_body=OrganizationSerializer())
 @api_view(['GET', 'POST'])
 @authentication_classes([JWTAuthentication])
@@ -22,7 +23,7 @@ def organizations(request):
     """Api view for adding and viewing all organizations. """
 
     if request.method == 'GET':
-        organization = Organization.objects.filter(is_active=True).filter(is_approved=True)
+        organization = Organization.objects.filter(is_active=True, is_approved=True)
 
         serializer = OrganizationSerializer(organization, many =True)
 
@@ -425,6 +426,7 @@ def sub_ecosystem_detail(request, pk):
 
         return Response(data, status = status.HTTP_204_NO_CONTENT)
 
+
 @swagger_auto_schema(methods=['POST'], request_body=SectorSerializer())
 @api_view(['GET', 'POST'])
 @authentication_classes([JWTAuthentication])
@@ -648,7 +650,6 @@ def subclass_detail(request, pk):
             }
 
         return Response(data, status = status.HTTP_204_NO_CONTENT)
-
 
 
 @api_view(['GET'])
