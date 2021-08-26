@@ -279,7 +279,7 @@ def user_login(request):
                     }
                     res =  Response(data, status=status.HTTP_200_OK)
                     cookie_max_age = 120 * 60 * 60 #5 days
-                    res.set_cookie('refresh', refresh, httponly=True, expires=SIMPLE_JWT.get('REFRESH_TOKEN_LIFETIME'), max_age=cookie_max_age, samesite=None)
+                    res.set_cookie('refresh', refresh, httponly=True, expires=SIMPLE_JWT.get('REFRESH_TOKEN_LIFETIME'), max_age=cookie_max_age, samesite='Strict')
                     
                     return res
 
