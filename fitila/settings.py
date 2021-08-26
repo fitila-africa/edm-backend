@@ -265,6 +265,6 @@ CACHES = {
 }
 
 
-
+SESSION_COOKIE_DOMAIN = 'fitila.vercel.app'
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE =  True
