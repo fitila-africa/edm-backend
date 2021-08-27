@@ -219,18 +219,6 @@ CORS_ALLOWED_ORIGINS = [
     'https://localhost:3000',
     'https://fitila.vercel.app',
 ]
-CORS_ALLOW_HEADERS = [
-    "accept",
-    "accept-encoding",
-    "authorization",
-    "content-type",
-    "dnt",
-    "origin",
-    "user-agent",
-    "x-csrftoken",
-    "x-requested-with",
-    "Set-Cookie"
-]
 
 #CLOUDINARY FILE UPLOADS
 cloudinary.config(
