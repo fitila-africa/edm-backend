@@ -10,7 +10,7 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from .models import User
-from .serializers import ChangePasswordSerializer, UserSerializer, CookieTokenRefreshSerializer
+from .serializers import ChangePasswordSerializer, UserSerializer # ,CookieTokenRefreshSerializer
 from .permissions import IsAdminOrReadOnly, IsAdminUser_Custom
 
 from rest_framework_simplejwt.authentication import JWTAuthentication
@@ -243,7 +243,7 @@ def get_user_detail(request, user_id):
 @swagger_auto_schema(method='post', request_body=openapi.Schema(
     type=openapi.TYPE_OBJECT, 
     properties={
-        'email': openapi.Schema(type=openapi.TYPE_STRING, description='string'),
+        'email': openapi.Schema(type=openapi.TYPE_STRING, description='user@email.com'),
         'password': openapi.Schema(type=openapi.TYPE_STRING, description='string'),
     }
 ))
@@ -269,6 +269,7 @@ def user_login(request):
                     user_detail['role'] = user.role
                     user_detail['is_admin'] = user.is_admin
                     user_detail['access'] = str(refresh.access_token)
+                    user_detail['refresh'] = str(refresh)
                     user_logged_in.send(sender=user.__class__,
                                         request=request, user=user)
 
@@ -277,11 +278,12 @@ def user_login(request):
                     'message' : "Successful",
                     'data' : user_detail,
                     }
-                    res =  Response(data, status=status.HTTP_200_OK)
-                    cookie_max_age = 120 * 60 * 60 #5 days
-                    res.set_cookie('refresh', refresh, httponly=True, expires=SIMPLE_JWT.get('REFRESH_TOKEN_LIFETIME'), max_age=cookie_max_age, samesite=False,secure=True)
+                    return Response(data, status=status.HTTP_200_OK)
+                
+                    # cookie_max_age = 120 * 60 * 60 #5 days
+                    # res.set_cookie('refresh', refresh, httponly=True, expires=SIMPLE_JWT.get('REFRESH_TOKEN_LIFETIME'), max_age=cookie_max_age, samesite=None,secure=True)
                     
-                    return res
+                    # return res
 
                 except Exception as e:
                     raise e
@@ -344,31 +346,31 @@ def reset_password(request):
         
 
 
-class CookieTokenRefreshView(TokenRefreshView):
-    def finalize_response(self, request, response, *args, **kwargs):
-        if response.data.get('refresh'):
-            cookie_max_age = 120 * 60 * 60 # 5 days
-            response.set_cookie('refresh', response.data['refresh'], max_age=cookie_max_age, httponly=True)
-            del response.data['refresh']
-        return super().finalize_response(request, response, *args, **kwargs)
-    serializer_class = CookieTokenRefreshSerializer
+# class CookieTokenRefreshView(TokenRefreshView):
+#     def finalize_response(self, request, response, *args, **kwargs):
+#         if response.data.get('refresh'):
+#             cookie_max_age = 120 * 60 * 60 # 5 days
+#             response.set_cookie('refresh', response.data['refresh'], max_age=cookie_max_age, httponly=True)
+#             del response.data['refresh']
+#         return super().finalize_response(request, response, *args, **kwargs)
+#     serializer_class = CookieTokenRefreshSerializer
     
     
 
-@api_view(['GET'])
+# @api_view(['GET'])
 # @authentication_classes([JWTAuthentication])
 # @permission_classes([IsAuthenticated])
-def logout_view(request):
-        try:
-            refresh_token = request.COOKIES.get('refresh')
-            token = RefreshToken(refresh_token)
-            token.blacklist()
+# def logout_view(request):
+#         try:
+#             refresh_token = request.COOKIES.get('refresh')
+#             token = RefreshToken(refresh_token)
+#             token.blacklist()
 
-            res = Response(status=status.HTTP_205_RESET_CONTENT)
-            res.delete_cookie('refresh')
-            return res
-        except Exception as e:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+#             res = Response(status=status.HTTP_205_RESET_CONTENT)
+#             res.delete_cookie('refresh')
+#             return res
+#         except Exception as e:
+#             return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
     

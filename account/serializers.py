@@ -27,11 +27,11 @@ class ChangePasswordSerializer(serializers.Serializer):
     
 
 
-class CookieTokenRefreshSerializer(TokenRefreshSerializer):
-    refresh = None
-    def validate(self, attrs):
-        attrs['refresh'] = self.context['request'].COOKIES.get('refresh')
-        if attrs['refresh']:
-            return super().validate(attrs)
-        else:
-            raise InvalidToken('No valid token found in cookie \'refresh_token\'')
+# class CookieTokenRefreshSerializer(TokenRefreshSerializer):
+#     refresh = None
+#     def validate(self, attrs):
+#         attrs['refresh'] = self.context['request'].COOKIES.get('refresh')
+#         if attrs['refresh']:
+#             return super().validate(attrs)
+#         else:
+#             raise InvalidToken('No valid token found in cookie \'refresh_token\'')
