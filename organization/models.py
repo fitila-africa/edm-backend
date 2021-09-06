@@ -1,5 +1,7 @@
 from django.db import models
-from account.models import User
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 class EcoSystem(models.Model):
     name = models.CharField(max_length=250, unique=True)
@@ -224,3 +226,13 @@ class Organization(models.Model):
           "date_updated": self.date_updated}
         
         
+        
+class DeclineOrganization(models.Model):
+    admin = models.ForeignKey(User, on_delete=models.DO_NOTHING, null=True, blank=True)
+    reason = models.TextField()
+    organization = models.ForeignKey(Organization, on_delete=models.DO_NOTHING, related_name='declined', null=True, blank=True)
+    is_active = models.BooleanField(default=True)
+    
+    def delete(self):
+        self.is_active=False
+        self.save()

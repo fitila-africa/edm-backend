@@ -3,8 +3,8 @@ from rest_framework.decorators import api_view, authentication_classes, permissi
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework import status
-from .models import EcoSystem, Organization, Sector, SubEcosystem, SubecosystemSubclass
-from .serializers import EcosystemSerializer, FileUploadSerializer, OrganizationSerializer, SectorSerializer, SubecosystemSerializer, SubecosystemSubclassSerializer
+from .models import DeclineOrganization, EcoSystem, Organization, Sector, SubEcosystem, SubecosystemSubclass
+from .serializers import DeclineOrganizationSerializer, EcosystemSerializer, FileUploadSerializer, OrganizationSerializer, SectorSerializer, SubecosystemSerializer, SubecosystemSubclassSerializer
 from account.permissions import IsAdminOrReadOnly, IsAdminUser_Custom
 from rest_framework_simplejwt.authentication import JWTAuthentication
 import cloudinary
@@ -787,11 +787,15 @@ def approve_org(request, org_id):
         return Response(data, status = status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(['GET'])
+@swagger_auto_schema(methods=['POST'], request_body=DeclineOrganizationSerializer())
+@api_view(['POST'])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAdminUser_Custom])
 def reject_org(request, org_id):
-
+    
+    """ Make a post request with the reason why an organization is being declined. The "reason" key is the only value that should be passed."""
+    user = request.user
+        
     try:
         object = Organization.objects.get(id=org_id)
 
@@ -803,39 +807,45 @@ def reject_org(request, org_id):
 
         return Response(data, status=status.HTTP_404_NOT_FOUND)
 
-    if request.method == 'GET':
+    if request.method == 'POST':
+        serializer = DeclineOrganizationSerializer(data=request.data)
 
-        object.is_declined = True
-        object.responded = True
-        object.save()
+        if serializer.is_valid():
+            DeclineOrganization.objects.create(**serializer.validated_data, organization=object, admin=user)
+            
+            
+            object.is_declined = True
+            object.responded = True
+            object.save()
 
-        serializer = OrganizationSerializer(object)
+            serializer = OrganizationSerializer(object)
 
 
-        data = {
-                'status'  : True,
-                'message' : "Successful",
-                'data' : serializer.data,
-            }
+            data = {
+                    'status'  : True,
+                    'message' : "Successful",
+                    'data' : serializer.data,
+                }
 
-        return Response(data, status = status.HTTP_202_ACCEPTED)
+            return Response(data, status = status.HTTP_202_ACCEPTED)
 
-    else:
-        data = {
-                'status'  : False,
-                'message' : "Unsuccessful",
-                'error'   : 'Wrong HTTP Method. Required method is GET'
-            }
+        else:
+            data = {
+                    'status'  : False,
+                    'message' : "Unsuccessful",
+                    'error'   : serializer.errors
+                }
 
-        return Response(data, status = status.HTTP_400_BAD_REQUEST)
+            return Response(data, status = status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['GET'])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAdminUser_Custom])
 def rejected_org(request):
+    
     if request.method == 'GET':
-        organization = Organization.objects.all().filter(is_active=True).filter(is_declined =True)
+        organization = Organization.objects.all().filter(is_active=True, is_declined =True)
 
         serializer = OrganizationSerializer(organization, many =True)
 

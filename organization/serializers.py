@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Organization, EcoSystem, Sector, SubEcosystem, SubecosystemSubclass
+from .models import DeclineOrganization, Organization, EcoSystem, Sector, SubEcosystem, SubecosystemSubclass
 
 class EcosystemSerializer(serializers.ModelSerializer):
     sub_ecosystem = serializers.ReadOnlyField()
@@ -56,3 +56,12 @@ class OrganizationSerializer(serializers.ModelSerializer):
         'ceo_name', 'ceo_image', 'ceo_gender', 'ceo_image_url','website','email',
         'phone','description','head_quarters', 'facebook',  
         'instagram','linkedin', 'twitter', 'url_1','url_2','url_3','cac_doc','is_entrepreneur','is_ecosystem','date_created', 'date_updated']
+        
+    
+class DeclineOrganizationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DeclineOrganization
+        fields = '__all__'
+        
+        
+        
