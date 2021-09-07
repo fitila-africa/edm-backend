@@ -167,7 +167,23 @@ def user_detail(request):
         serializer = UserSerializer(user, data = request.data, partial=True) 
 
         if serializer.is_valid():
-        
+            
+            
+            #upload profile picture
+            if 'profile_pics' in serializer.validated_data.keys():
+                try:
+                    profile_pics = serializer.validated_data['profile_pics'] #get the image file from the request 
+                    img1 = cloudinary.uploader.upload(profile_pics, folder = 'fitila/profile pictures/') #upload the image to cloudinary
+                    serializer.validated_data['profile_pics'] = "" #delete the image file
+                    serializer.validated_data['profile_pics_url'] = img1['secure_url'] #save the image url 
+                except Exception:
+                    data = {
+                        'status'  : False,
+                        'error' : "Unable to upload profile picture"
+                    }
+
+                    return Response(data, status = status.HTTP_400_BAD_REQUEST)
+            
             serializer.save()
 
             data = {
