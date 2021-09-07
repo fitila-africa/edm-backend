@@ -25,7 +25,8 @@ urlpatterns = [
     
     path('user/forget_password/', include('django_rest_passwordreset.urls', namespace='forget_password')),
     
-    # path('auth/logout/', views.logout_view, name='logout'),
+    path('otp/', views.otp_verification),
+    path('otp/new/', views.reset_otp),
 
 ]
 

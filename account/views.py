@@ -11,6 +11,8 @@ from rest_framework import status
 
 from .models import User
 from .serializers import ChangePasswordSerializer, UserSerializer # ,CookieTokenRefreshSerializer
+from .signals import NewOtpSerializer, OTPVerifySerializer
+
 from .permissions import IsAdminOrReadOnly, IsAdminUser_Custom
 
 from rest_framework_simplejwt.authentication import JWTAuthentication
@@ -239,6 +241,39 @@ def get_user_detail(request, user_id):
 
 
 
+@swagger_auto_schema(methods=['POST'],  request_body=NewOtpSerializer())
+@api_view(['POST'])
+def reset_otp(request):
+    if request.method == 'POST':
+        serializer = NewOtpSerializer(data = request.data)
+        if serializer.is_valid():
+            data = serializer.get_new_otp()
+            
+            return Response(data, status=status.HTTP_200_OK)
+        
+        else:
+            return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
+        
+        
+            
+@swagger_auto_schema(methods=['POST'], request_body=OTPVerifySerializer())
+@api_view(['POST'])
+def otp_verification(request):
+    
+    """Api view for verifying OTPs """
+
+    if request.method == 'POST':
+
+        serializer = OTPVerifySerializer(data = request.data)
+
+        if serializer.is_valid():
+            data = serializer.verify_otp()
+            
+            return Response(data, status=status.HTTP_200_OK)
+        else:
+
+            return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
+        
 
 @swagger_auto_schema(method='post', request_body=openapi.Schema(
     type=openapi.TYPE_OBJECT, 
@@ -255,41 +290,48 @@ def user_login(request):
     if request.method == "POST":
         provider = 'email'
         user = authenticate(request, email = request.data['email'], password = request.data['password'])
-        if user is not None and user.is_active==True:
-            if user.auth_provider == provider:
-                try:
+        if user is not None:
+            if user.is_active==True:
+                if user.auth_provider == provider:
+                    try:
+                        
+                        refresh = RefreshToken.for_user(user)
+
+                        user_detail = {}
+                        user_detail['id']   = user.id
+                        user_detail['first_name'] = user.first_name
+                        user_detail['last_name'] = user.last_name
+                        user_detail['email'] = user.email
+                        user_detail['role'] = user.role
+                        user_detail['is_admin'] = user.is_admin
+                        user_detail['access'] = str(refresh.access_token)
+                        user_detail['refresh'] = str(refresh)
+                        user_logged_in.send(sender=user.__class__,
+                                            request=request, user=user)
+
+                        data = {
+                        'status'  : True,
+                        'message' : "Successful",
+                        'data' : user_detail,
+                        }
+                        return Response(data, status=status.HTTP_200_OK)
                     
-                    refresh = RefreshToken.for_user(user)
+                        # cookie_max_age = 120 * 60 * 60 #5 days
+                        # res.set_cookie('refresh', refresh, httponly=True, expires=SIMPLE_JWT.get('REFRESH_TOKEN_LIFETIME'), max_age=cookie_max_age, samesite=None,secure=True)
+                        
+                        # return res
 
-                    user_detail = {}
-                    user_detail['id']   = user.id
-                    user_detail['first_name'] = user.first_name
-                    user_detail['last_name'] = user.last_name
-                    user_detail['email'] = user.email
-                    user_detail['role'] = user.role
-                    user_detail['is_admin'] = user.is_admin
-                    user_detail['access'] = str(refresh.access_token)
-                    user_detail['refresh'] = str(refresh)
-                    user_logged_in.send(sender=user.__class__,
-                                        request=request, user=user)
-
-                    data = {
-                    'status'  : True,
-                    'message' : "Successful",
-                    'data' : user_detail,
-                    }
-                    return Response(data, status=status.HTTP_200_OK)
-                
-                    # cookie_max_age = 120 * 60 * 60 #5 days
-                    # res.set_cookie('refresh', refresh, httponly=True, expires=SIMPLE_JWT.get('REFRESH_TOKEN_LIFETIME'), max_age=cookie_max_age, samesite=None,secure=True)
-                    
-                    # return res
-
-                except Exception as e:
-                    raise e
+                    except Exception as e:
+                        raise e
+                else:
+                    raise AuthenticationFailed(
+                    detail='Please continue your login using ' + user.auth_provider)
             else:
-                raise AuthenticationFailed(
-                detail='Please continue your login using ' + user.auth_provider)
+                data = {
+                'status'  : False,
+                'error': 'This account has not been activated'
+                }
+            return Response(data, status=status.HTTP_403_FORBIDDEN)
 
         else:
             data = {

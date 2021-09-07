@@ -1,7 +1,8 @@
 from rest_framework import serializers
-from .models import User
+from .models import User, OTP
 from rest_framework_simplejwt.serializers import TokenRefreshSerializer
 from rest_framework_simplejwt.exceptions import InvalidToken 
+
 
 class UserSerializer(serializers.ModelSerializer):
     user_organization = serializers.ReadOnlyField()
@@ -23,8 +24,7 @@ class ChangePasswordSerializer(serializers.Serializer):
             raise serializers.ValidationError({"error":"Please enter matching passwords"})
         return True
             
-        
-    
+ 
 
 
 # class CookieTokenRefreshSerializer(TokenRefreshSerializer):

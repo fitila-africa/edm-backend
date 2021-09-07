@@ -19,7 +19,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     password      = models.CharField(_('password'), max_length=300)
     profile_pics = models.ImageField(_('profile picture'), null=True)
     profile_pics_url = models.CharField(_('profile picture url'), max_length = 300, null=True)
-    is_active     = models.BooleanField(_('active'), default=True)
+    is_active     = models.BooleanField(_('active'), default=False)
     is_staff     = models.BooleanField(_('staff'), default=False)
     is_admin    = models.BooleanField(_('admin'), default=False)
     is_superuser    = models.BooleanField(_('superuser'), default=False)
@@ -45,3 +45,11 @@ class User(AbstractBaseUser, PermissionsMixin):
         return list(map(lambda x: x.org_dict() ,organization))
     
     
+class OTP(models.Model):
+    code = models.CharField(max_length=6)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='otps')
+    
+
+    
+    def __str__(self):
+        return self.code
