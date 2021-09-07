@@ -121,7 +121,7 @@ class Organization(models.Model):
     funding                 = models.IntegerField(default=0)
     funding_disbursed_for_support = models.IntegerField(default=0)
     company_valuation       = models.CharField(max_length=200, null=True)
-    is_startup              = models.CharField(max_length=20, blank =True, null=True)
+    # is_startup              = models.CharField(max_length=20, blank =True, null=True)
     num_supported_business  = models.CharField(max_length=20, blank =True, null=True)
     ceo_name                = models.CharField(max_length=200, null=True)
     ceo_gender              = models.CharField(max_length=200, null=True)
@@ -140,6 +140,7 @@ class Organization(models.Model):
     url_2                   =models.CharField(max_length=350, blank =True, null=True)
     url_3                   =models.CharField(max_length=350, blank =True, null=True)
     cac_doc                 = models.CharField(max_length=350, blank =True, null=True)
+    no_of_jobs              = models.IntegerField(default=0, blank =True, null=True)
     is_entrepreneur         = models.BooleanField(default=False)
     is_ecosystem            = models.BooleanField(default=False)
     is_active               = models.BooleanField(default=True)
@@ -198,7 +199,7 @@ class Organization(models.Model):
           "funding": self.funding,
           "funding_disbursed_for_support": self.funding_disbursed_for_support,
           "company_valuation": self.company_valuation,
-          "is_startup": self.is_startup,
+        #   "is_startup": self.is_startup,
           "num_supported_business": self.num_supported_business,
           "ceo_name": self.ceo_name,
           "ceo_gender": self.ceo_gender,
@@ -217,6 +218,7 @@ class Organization(models.Model):
           "url_2": self.url_2,
           "url_3": self.url_3,
           "cac_doc": self.cac_doc,
+          "no_of_jobs":self.no_of_jobs,
           "is_entrepreneur": self.is_entrepreneur,
           "is_ecosystem": self.is_ecosystem,
           "is_active": self.is_active,

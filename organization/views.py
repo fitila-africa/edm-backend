@@ -150,7 +150,11 @@ def organization_detail(request, pk):
 
 
             serializer.save()
-
+            organization.is_approved=False
+            organization.is_declined=False
+            organization.responded=False
+            organization.save()
+            
             data = {
                 'status'  : True,
                 'message' : "Successful",
@@ -187,7 +191,7 @@ def organization_detail(request, pk):
 @permission_classes([IsAdminUser_Custom])
 def pending_organizations(request):
     if request.method == 'GET':
-        organization = Organization.objects.all().filter(is_active=True).filter(responded =False)
+        organization = Organization.objects.filter(is_active=True, responded =False)
 
         serializer = OrganizationSerializer(organization, many =True)
 

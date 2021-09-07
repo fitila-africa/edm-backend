@@ -23,6 +23,7 @@ def populate_ecosystem():
         EcoSystem.objects.create(name=i)
         print('{} Done'.format(i))
 
+
 def populate_organization():
     
     """This function is clears all of the organization in the db and populates it with new ones. Only used to populate staging data must not be run in production"""
@@ -60,86 +61,15 @@ def populate_sub():
     print("Cleared former data")
     print("=================\nWorking on new data\n")
 
-    # data  = {
-        # 'Business support': [{'name': 'Business Advisory'}, {'name': 'Mentoring'}, {'name': 'Resources'}, {'name': 'Incubators'}, {'name':'Others'}],
 
-        # 'Training' : [{'name': 'Enterprise Support Organizations'}, {'name': 'Incubators'}, {'name':'Others'}],
+    data=[('Business support', 'Accelerators'), ('Business support', 'Business Advisory'), ('Business support', 'Incubators'), ('Business support', 'Resources'), ('Funding', 'Crowdfunding'), ('Funding', 'Equity Funders'), ('Funding', 'Grant Providers'), ('Funding', 'Loan Providers'), ('MSMEs and Startups', 'MSMEs'), ('MSMEs and Startups', 'Startups'), ('Market Access', 'Organizations That Facilitate Trade'), ('Market Access', 'Tech Platforms'), ('Policy and Regulation', 'Entrepreneurship Advocacy Groups'), ('Policy and Regulation', 'Government'), ('Policy and Regulation', 'Regulators'), ('Research and Development', 'Research Organizations/Centres'), ('Training', 'Accelerators'), ('Training', 'Enterprise Support Organizations'), ('Training', 'Incubators')]
 
-        # 'Funding' : [{'name': 'Loan Providers'}, {'name': 'Grant Providers'}, {'name': 'Equity Funders'}, {'name': 'Crowdfunding'}, {'name':'Others'}],
-
-        # 'Market Access':[{'name': 'Tech Platforms'}, {'name': 'Organizations'},{'name':'Others'}],
+    for key in data:
+        ecosystem = EcoSystem.objects.get(name=key[0])
         
-        # 'Policy and Regulation': [{'name': 'Regulators'}, {'name': 'Entrepreneurship Advocacy groups'}, {'name': 'Government'}, {'name':'Others'}],
-
-        # # 'Resources':[{'name':'Virtual Resources'}, {'name':'In-person Resources'}, {'name':'Tools'}, {'name':'Services'}, {'name':'Others'}],
-
-        # 'Research and Development' :[{'name': 'Research Organizations/Centres'}, {'name': 'Others'}],
-  
-        # 'MSMEs and Startups':[{'name':'MSMEs'}, {'name':'Others'}]}
-        
-    data  = {'Business support': [{'name': 'Incubators'},
-  {'name': 'Entrepreneurship Advocacy groups'},
-  {'name': 'Resources'},
-  {'name': 'Others'},
-  {'name': 'Mentoring'},
-  {'name': 'Government'},
-  {'name': 'Research Organizations/Centres'},
-  {'name': 'Regulators'},
-  {'name': 'Accelerators'},
-  {'name': 'Business Advisory'},
-  {'name': 'Equity Funders'},
-  {'name': 'Enterprise Support Organizations'}],
- 'Funding': [{'name': 'Incubators'},
-  {'name': 'Grant Providers'},
-  {'name': 'Resources'},
-  {'name': 'Others'},
-  {'name': 'Government'},
-  {'name': 'Research Organizations/Centres'},
-  {'name': 'Loan Providers'},
-  {'name': 'Crowdfunding'},
-  {'name': 'Accelerators'},
-  {'name': 'Business Advisory'},
-  {'name': 'Equity Funders'},
-  {'name': 'Enterprise Support Organizations'}],
- 'MSMEs and Startups': [{'name': 'MSMEs'}, {'name': 'Startups'}],
- 'Market Access': [{'name': 'Government'},
-  {'name': 'Tech Platforms'},
-  {'name': 'Organizations'}],
- 'Policy and Regulation': [{'name': 'Entrepreneurship Advocacy groups'},
-  {'name': 'Resources'},
-  {'name': 'Government'},
-  {'name': 'Organizations'},
-  {'name': 'Research Organizations/Centres'},
-  {'name': 'Loan Providers'},
-  {'name': 'Regulators'},
-  {'name': 'Enterprise Support Organizations'}],
- 'Research and Development': [{'name': 'Resources'},
-  {'name': 'Others'},
-  {'name': 'Mentoring'},
-  {'name': 'Government'},
-  {'name': 'Research Organizations/Centres'},
-  {'name': 'Loan Providers'},
-  {'name': 'Business Advisory'},
-  {'name': 'Enterprise Support Organizations'}],
- 'Training': [{'name': 'Incubators'},
-  {'name': 'Entrepreneurship Advocacy groups'},
-  {'name': 'Resources'},
-  {'name': 'Mentoring'},
-  {'name': 'Research Organizations/Centres'},
-  {'name': 'Regulators'},
-  {'name': 'Enterprise Support Organizations'},
-  {'name': 'Accelerators'},
-  {'name': 'Business Advisory'},
-  {'name': 'Equity Funders'},
-  {'name': 'Government'}]}
-
-    for key in data.keys():
-        ecosystem = EcoSystem.objects.get(name=key)
-        for val in data[key]:
-            SubEcosystem.objects.create(**val, ecosystem=ecosystem)
-            print(val['name'], 'Done')
-
+        SubEcosystem.objects.create(name=key[1], ecosystem=ecosystem)
         print(key, 'Done')
+
         print('====================\n')
 
 
@@ -153,17 +83,16 @@ def add_sector():
     print("Cleared former data")
     print("=================\nWorking on new data\n")
     
-    sectors = ['Development Sector',
-                'Education',
-                'Agribusiness',
-                'Health',
-                'Others',
-                'Technology',
-                'Manufacturing',
-                'Public Sector',
-                'Private Sector',
-                'Creatives'
-        ]
+    sectors = ['Manufacturing',
+            'Education',
+            'Private Sector',
+            'Creatives',
+            'Agribusiness',
+            'Health',
+            'Others',
+            'Technology',
+            'Development Sector',
+            'Public Sector']
 
 
     for i in sectors:
@@ -178,33 +107,15 @@ def populate_sub_ecosystem_sub_class():
     print("Cleared former data")
     print("=================\nWorking on new data\n")
     
-    data = {('Business support', 'Accelerators'): [{'name': ''}, {'name': 'Venture Capital'}, {'name': 'Mentoring'}], 
-            ('Business support', 'Business Advisory'): [{'name': ''}, {'name': 'Tax'}, {'name': 'Legal'}, {'name': 'Human Resources'}, {'name': 'Book-Keeping'}, {'name': 'Mentoring'}, {'name': 'Venture Capital'}], 
-            ('Business support', 'Incubators'): [{'name': ''}, {'name': 'Venture Capital'}, {'name': 'Mentoring'}], 
-            ('Business support', 'Mentoring'): [{'name': ''}, {'name': 'Mentoring'}], 
-            ('Business support', 'Resources'): [{'name': ''}, {'name': 'Venture Capital'}, {'name': 'Mentoring'}], 
-            ('Funding', 'Crowdfunding'): [{'name': ''}], 
-            ('Funding', 'Equity Funders'): [{'name': ''}, {'name': 'Angel Investors'}, {'name': 'Venture Capital'}, {'name': 'Mentoring'}], ('Funding', 'Grant Providers'): [{'name': ''}], 
-            ('Funding', 'Loan Providers'): [{'name': ''}], 
-            ('MSMEs and Startups', 'MSMEs'): [{'name': ''}], 
-            ('MSMEs and Startups', 'Startups'): [{'name': ''}], 
-            ('Market Access', 'Organizations'): [{'name': ''}], 
-            ('Market Access', 'Tech Platforms'): [{'name': ''}], 
-            ('Policy and Regulation', 'Entrepreneurship Advocacy groups'): [{'name': ''}], 
-            ('Policy and Regulation', 'Government'): [{'name': ''}], 
-            ('Policy and Regulation', 'Regulators'): [{'name': ''}], ('Research and Development', 'Others'): [{'name': ''}, {'name': 'Tax'}], 
-            ('Research and Development', 'Research Organizations/Centres'): [{'name': ''}, {'name': 'Mentoring'}], 
-            ('Training', 'Accelerators'): [{'name': ''}, {'name': 'Venture Capital'}, {'name': 'Mentoring'}], 
-            ('Training', 'Enterprise Support Organizations'): [{'name': ''}, {'name': 'Venture Capital'}, {'name': 'Mentoring'}], 
-            ('Training', 'Incubators'): [{'name': ''}, {'name': 'Venture Capital'}, {'name': 'Mentoring'}]}
+    data = [('Business support', 'Accelerators', ''), ('Business support', 'Business Advisory', 'Book-Keeping'), ('Business support', 'Business Advisory', 'Human Resources'), ('Business support', 'Business Advisory', 'Legal'), ('Business support', 'Business Advisory', 'Mentoring'), ('Business support', 'Business Advisory', 'Tax'), ('Business support', 'Incubators', ''), ('Business support', 'Resources', ''), ('Funding', 'Crowdfunding', ''), ('Funding', 'Equity Funders', 'Angel Investors'), ('Funding', 'Equity Funders', 'Venture Capital'), ('Funding', 'Grant Providers', ''), ('Funding', 'Loan Providers', ''), ('MSMEs and Startups', 'MSMEs', ''), ('MSMEs and Startups', 'Startups', ''), ('Market Access', 'Organizations That Facilitate Trade', ''), ('Market Access', 'Tech Platforms', ''), ('Policy and Regulation', 'Entrepreneurship Advocacy Groups', ''), ('Policy and Regulation', 'Government', ''), ('Policy and Regulation', 'Regulators', ''), ('Research and Development', 'Research Organizations/Centres', ''), ('Training', 'Accelerators', ''), ('Training', 'Enterprise Support Organizations', ''), ('Training', 'Incubators', '')]
     
-    for i in data.keys():
+    for i in data:
         ecosystem = EcoSystem.objects.get(name=i[0])
         sub       = SubEcosystem.objects.get(name = i[1], ecosystem=ecosystem)
-        for v in data[i]:
-            if v['name']:
-                SubecosystemSubclass.objects.create(name = v['name'], sub_ecosystem=sub, ecosystem=ecosystem)
-                print(v['name'], " done")
+        
+        if i[2]:
+            SubecosystemSubclass.objects.create(name = i[2], sub_ecosystem=sub, ecosystem=ecosystem)
+            print(i[2], " done")
         print(i, "Done")
         print()
     
@@ -236,6 +147,7 @@ def process_data(file):
     revised_data.ceo_gender.fillna('Nil', inplace =True)
     revised_data.ceo_gender = revised_data.ceo_gender.apply(lambda x : x.title())
     revised_data.rename(columns={'ceo/founder/director name':'ceo_name'}, inplace=True)
+    revised_data.rename(columns={'subclass_subecosystem':'sub_ecosystem_sub_class'}, inplace=True)
     revised_data.ceo_name.fillna('Nil', inplace=True)
     revised_data.fillna('', inplace=True)
     revised_data.set_index('name', inplace=True)
