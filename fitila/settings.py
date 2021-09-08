@@ -15,8 +15,8 @@ from dotenv import load_dotenv
 from datetime import timedelta
 import cloudinary
 
-load_dotenv('/home/fitilla/fitila/fitila/.env')
-# load_dotenv()
+# load_dotenv('/home/fitilla/fitila/fitila/.env')
+load_dotenv()
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -240,16 +240,16 @@ SWAGGER_SETTINGS = {
 
 
 # emails 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 EMAIL_HOST = 'smtp.mailgun.org'
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
-EMAIL_PORT = 465
+EMAIL_PORT = 465 
 EMAIL_USE_SSL = True    # use port 465
 EMAIL_USE_TLS = False    # use port 587
 
-DEFAULT_FROM_EMAIL = 'admin@edm.com'
+DEFAULT_FROM_EMAIL = 'EDM PLATFORM <noreply@ecomap.ng>'
 
 
 #caching

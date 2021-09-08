@@ -8,6 +8,7 @@ import pyotp
 from .models import OTP
 from fitila import settings
 from rest_framework import serializers
+from django.template.loader import render_to_string
 
 totp = pyotp.TOTP('base32secret3232', interval=90)
 
@@ -19,22 +20,29 @@ User = get_user_model()
 def password_reset_token_created(sender, instance, reset_password_token, *args, **kwargs):
     token = "https://www.edm.com/forgot-password/{}".format(reset_password_token.key)
     
+    msg_html = render_to_string('forgot_password.html', {
+                        'first_name': str(reset_password_token.user.first_name).title(),
+                        'token':token})
+    
+    message= 'Hello {},\n\nYou are receiving this message because you or someone else have requested the reset of the password for your account.\nPlease click on the following link, or paste this into your browser to complete the process within 24hours of receiving it:\n{}\n\nPlease if you did not request this please ignore this e-mail and your password would remain unchanged.\n\nRegards,\nEDM Support'.format(reset_password_token.user.first_name, token)
+    
     send_mail(
-        subject = "Password Reset for OyoyoNG",
-
-        message= 'Hello {},\n\nYou are receiving this message because you or someone else have requested the reset of the password for your account.\nPlease click on the following link, or paste this into your browser to complete the process within 24hours of receiving it:\n{}\n\nPlease if you did not request this please ignore this e-mail and your password would remain unchanged.\n\nRegards,\nOyoyoNG Support'.format(reset_password_token.user.first_name, token),
-        
-        from_email  = 'admin@edm.com',
+        subject = "RESET PASSWORD FOR EDM PORTAL",
+        message= message,
+        html_message=msg_html,
+        from_email  = 'EDM SUPPORT <noreply@ecomap.ng>',
         recipient_list= [reset_password_token.user.email]
     )
     
-@receiver(post_save, sender=User)
-def send_otp(sender, instance, **kwargs):
-    code = totp.now()
-    print(code)
-    subject = "ACCOUNT VERIFICATION FOR ENTERPRISE DATA MAP PLATFORM"
     
-    message = f"""Hi, {instance.first_name}
+@receiver(post_save, sender=User)
+def send_otp(sender, instance, created, **kwargs):
+    if created:
+        code = totp.now()
+        print(code)
+        subject = "ACCOUNT VERIFICATION FOR ENTERPRISE DATA MAP PLATFORM"
+        
+        message = f"""Hi, {str(instance.first_name).title()}.
 Thank you for signing up!
 Complete your verification on the enterprise data map (EMD) portal with the OTP below:
 
@@ -44,12 +52,16 @@ Expires in 60 seconds!
 
 Thank you,
 EDM Team                
-"""
-    email_from = settings.DEFAULT_FROM_EMAIL
-    recipient_list = [instance.email]
-    send_mail( subject, message, email_from, recipient_list)
-    
-    OTP.objects.create(code=code, user=instance)
+"""   
+        msg_html = render_to_string('signup_email.html', {
+                        'first_name': str(instance.first_name).title(),
+                        'code':code})
+        
+        email_from = settings.DEFAULT_FROM_EMAIL
+        recipient_list = [instance.email]
+        send_mail( subject, message, email_from, recipient_list, html_message=msg_html)
+        
+        OTP.objects.create(code=code, user=instance)
     
     
 
@@ -62,7 +74,11 @@ class OTPVerifySerializer(serializers.Serializer):
         otp = self.validated_data['otp']
         
         if OTP.objects.filter(code=otp).exists():
-            otp = OTP.objects.get(code=otp)
+            try:
+                otp = OTP.objects.get(code=otp)
+            except Exception:
+                OTP.objects.filter(code=otp).delete()
+                raise serializers.ValidationError(detail='Cannot verify otp. Please try later')
             
             if totp.verify(otp):
                 if otp.user.is_active == False:
@@ -100,9 +116,9 @@ class NewOtpSerializer(serializers.Serializer):
         code = totp.now()
         print(code)
         OTP.objects.create(code=code, user=user)
-        subject = "ACCOUNT VERIFICATION FOR ENTERPRISE DATA MAP PLATFORM"
+        subject = "NEW OTP FOR ENTERPRISE DATA MAP PLATFORM"
         
-        message = f"""Hi, {user.first_name}.
+        message = f"""Hi, {str(user.first_name).title()}.
 
     Complete your verification on the enterprise data map (EMD) portal with the OTP below:
 
@@ -113,9 +129,13 @@ class NewOtpSerializer(serializers.Serializer):
     Thank you,
     EDM Team                
     """
+        msg_html = render_to_string('new_otp.html', {
+                        'first_name': str(user.first_name).title(),
+                        'code':code})
+        
         email_from = settings.DEFAULT_FROM_EMAIL
         recipient_list = [user.email]
-        send_mail( subject, message, email_from, recipient_list)
+        send_mail( subject, message, email_from, recipient_list, html_message=msg_html)
         
         return {'message': 'Please check your email for OTP.'}
         

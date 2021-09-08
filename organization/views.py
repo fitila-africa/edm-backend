@@ -10,7 +10,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 import cloudinary
 import cloudinary.uploader
 from drf_yasg.utils import swagger_auto_schema
-
+from account.send_notice import send_notification
 from .populate import process_data
 
 @cache_page(60 * 6)
@@ -75,6 +75,8 @@ def organizations(request):
                 return Response(data, status = status.HTTP_400_BAD_REQUEST)
 
             organization = Organization.objects.create(**serializer.validated_data, user=request.user)
+            
+            send_notification(user=request.user, status='pending')
 
             serializer = OrganizationSerializer(organization)
             data = {
@@ -157,7 +159,7 @@ def organization_detail(request, pk):
             
             data = {
                 'status'  : True,
-                'message' : "Successful",
+                'message' : "Your request is pending approval.",
                 'data' : serializer.data,
             }
 
@@ -769,6 +771,8 @@ def approve_org(request, org_id):
         object.is_approved = True
         object.responded = True
         object.save()
+        
+        send_notification(user=object.user, status='approved')
 
         serializer = OrganizationSerializer(object)
 
@@ -821,7 +825,7 @@ def reject_org(request, org_id):
             object.is_declined = True
             object.responded = True
             object.save()
-
+            send_notification(user=object.user, status='rejected', reason=serializer.validated_data['reason'])
             serializer = OrganizationSerializer(object)
 
 
