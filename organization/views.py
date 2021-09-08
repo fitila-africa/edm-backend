@@ -157,6 +157,9 @@ def organization_detail(request, pk):
             organization.responded=False
             organization.save()
             
+            if not request.user.is_admin:
+                send_notification(request.user, status='updated')
+                
             data = {
                 'status'  : True,
                 'message' : "Your request is pending approval.",
