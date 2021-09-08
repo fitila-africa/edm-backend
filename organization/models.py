@@ -106,7 +106,7 @@ class Sector(models.Model):
 
 
 class Organization(models.Model):
-    user                    = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='orgaizations', null=True)
+    user                    = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='organizations', null=True)
     name                    = models.CharField(max_length=350)
     company_logo            = models.ImageField(null=True)
     company_logo_url        = models.CharField(max_length=200, null=True)
@@ -171,6 +171,12 @@ class Organization(models.Model):
     def sub_ecosystem_sub_class_name(self):
         return self.sub_ecosystem_sub_class.name
     
+    @property
+    def reason_for_declin(self):
+        reason = self.declined.all().last()
+        if reason:
+            return reason.reason
+        return ""
     
     def delete(self):
         self.is_active = False
@@ -219,6 +225,7 @@ class Organization(models.Model):
           "url_3": self.url_3,
           "cac_doc": self.cac_doc,
           "no_of_jobs":self.no_of_jobs,
+          "reason_for_decline" : self.reason_for_decline,
           "is_entrepreneur": self.is_entrepreneur,
           "is_ecosystem": self.is_ecosystem,
           "is_active": self.is_active,

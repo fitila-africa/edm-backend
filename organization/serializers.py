@@ -46,14 +46,15 @@ class OrganizationSerializer(serializers.ModelSerializer):
     ecosystem_name = serializers.ReadOnlyField()
     sub_ecosystem_name = serializers.ReadOnlyField()
     sub_ecosystem_sub_class_name = serializers.ReadOnlyField()
-
+    reason_for_decline = serializers.ReadOnlyField()
+    
     class Meta:
         model = Organization
         fields = ['id','user','name','company_logo','company_logo_url', 'num_of_employees','state', 'address','ecosystem', 'ecosystem_name',
         'sub_ecosystem', 'sub_ecosystem_name',
         'sub_ecosystem_sub_class', 'sub_ecosystem_sub_class_name', 'sector','sector_name','business_level', 'funding', 'funding_disbursed_for_support','company_valuation', 'num_supported_business', 'ceo_name', 'ceo_image', 'ceo_gender', 'ceo_image_url','website','email',
         'phone','description','head_quarters', 'facebook',  
-        'instagram','linkedin', 'twitter', 'url_1','url_2','url_3','cac_doc', 'no_of_jobs','is_entrepreneur','is_ecosystem','date_created', 'date_updated']
+        'instagram','linkedin', 'twitter', 'url_1','url_2','url_3','cac_doc', 'no_of_jobs','is_entrepreneur','is_ecosystem', 'reason_for_decline','date_created', 'date_updated']
         
     
 class DeclineOrganizationSerializer(serializers.ModelSerializer):
