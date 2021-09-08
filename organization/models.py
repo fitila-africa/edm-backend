@@ -172,7 +172,7 @@ class Organization(models.Model):
         return self.sub_ecosystem_sub_class.name
     
     @property
-    def reason_for_declin(self):
+    def reason_for_decline(self):
         reason = self.declined.all().last()
         if reason:
             return reason.reason
@@ -231,6 +231,7 @@ class Organization(models.Model):
           "is_active": self.is_active,
           "is_approved": self.is_approved,
           "is_declined": self.is_declined,
+          'responded' : self.responded,
           "date_created": self.date_created,
           "date_updated": self.date_updated}
         
