@@ -40,7 +40,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         return self.email
     
     def user_organization(self):
-        organization = self.orgaizations.filter(is_active=True)
+        organization = self.organizations.filter(is_active=True)
         
         return list(map(lambda x: x.org_dict() ,organization))
     
