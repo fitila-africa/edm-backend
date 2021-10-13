@@ -15,13 +15,17 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.urls.conf import re_path
+from django.views.generic.base import TemplateView
 from rest_framework import permissions # new
 from drf_yasg.views import get_schema_view # new
 from drf_yasg import openapi # new
-from rest_framework.schemas.openapi import SchemaGenerator
 import debug_toolbar
 from . import settings
 
+def trigger_error(request):
+    division_by_zero = 1 / 0
+    
 schema_view = get_schema_view(
     openapi.Info(
         title="EDM API",
@@ -44,9 +48,12 @@ urlpatterns = [
     path('api/v1/cms/', include('cms.urls')), 
     
     #documentation
-    path('', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    path('docs/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('docs/redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+    path('sentry-debug/', trigger_error),
 ]
+
+urlpatterns += [path('', TemplateView.as_view(template_name='index.html'))]
 
 
 if settings.DEBUG:

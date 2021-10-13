@@ -33,7 +33,7 @@ SECRET_KEY = os.getenv('DJANGO_SECRET', "development")
 
 env = os.getenv('ENV', 'development')
 
-if env == 'production':
+if env == 'staging':
     
     DEBUG = bool(0)
     
@@ -48,7 +48,22 @@ if env == 'production':
         'PORT': "",
         }
     }
+elif env == 'production':
+        
+    DEBUG = bool(0)
     
+    ALLOWED_HOSTS = ['165.232.120.4']
+    DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': os.getenv('PROD_DB_NAME'),
+        'USER': os.getenv('PROD_DB_USER'),
+        'PASSWORD': os.getenv('PROD_DB_PASSWORD'),
+        'HOST': os.getenv('PROD_DB_HOST'),
+        'PORT': "",
+        }
+    }
+       
     
 else:
     
@@ -115,7 +130,7 @@ ROOT_URLCONF = 'fitila.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'build')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -174,6 +189,9 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'build/static')
+]
 
 
 MEDIA_URL = '/media/'
@@ -267,3 +285,46 @@ CACHES = {
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE =  True
 
+# LOGGING = {
+#     'version': 1,
+#     # Version of logging
+#     'disable_existing_loggers': False,
+#     #disable logging 
+#     # Handlers
+#     'handlers': {
+#         'file': {
+#             'level': 'ERROR',
+#             'class': 'logging.FileHandler',
+#             'filename': 'edm-debug.log',
+#         },
+#         'console': {
+#             'class': 'logging.StreamHandler',
+#         },
+#     },
+#     # Loggers
+#     'loggers': {
+#         'django': {
+#             'handlers': ['file', 'console'],
+#             'level': 'DEBUG',
+#             'propagate': True,
+#             'level': os.getenv('DJANGO_LOG_LEVEL', 'DEBUG')
+#         },
+#     },
+# }
+
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
+
+sentry_sdk.init(
+    dsn="https://e823ac79d0f9442dab0efd519622cf83@o1037728.ingest.sentry.io/6005800",
+    integrations=[DjangoIntegration()],
+
+    # Set traces_sample_rate to 1.0 to capture 100%
+    # of transactions for performance monitoring.
+    # We recommend adjusting this value in production.
+    traces_sample_rate=1.0,
+
+    # If you wish to associate users to errors (assuming you are using
+    # django.contrib.auth) you may enable sending PII data.
+    send_default_pii=True
+)
