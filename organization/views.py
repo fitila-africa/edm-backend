@@ -44,7 +44,7 @@ def organizations(request):
                 if 'ceo_image' in serializer.validated_data.keys() and serializer.validated_data['ceo_image']:
                     # upload the ceo's image
                     ceo_image = serializer.validated_data['ceo_image'] #get the image file from the request
-                    img1 = cloudinary.uploader.upload(ceo_image, folder = 'fitila/ceo_image/') #upload the image to cloudinary
+                    img1 = cloudinary.uploader.upload(ceo_image, folder = 'edm/ceo_image/') #upload the image to cloudinary
                     serializer.validated_data['ceo_image'] = "" #delete the image file
                     serializer.validated_data['ceo_image_url'] = img1['secure_url'] #save the image url
                 else:
@@ -59,7 +59,7 @@ def organizations(request):
                 if 'company_logo' in serializer.validated_data.keys() and serializer.validated_data['company_logo']:
                 #upload the company's logo
                     company_logo = serializer.validated_data['company_logo'] #get the image file from the request
-                    img2 = cloudinary.uploader.upload(company_logo, folder = 'fitila/company_logo/') #upload the image to cloudinary
+                    img2 = cloudinary.uploader.upload(company_logo, folder = 'edm/company_logo/') #upload the image to cloudinary
                     serializer.validated_data['company_logo'] = "" #delete the image file
                     serializer.validated_data['company_logo_url'] = img2['secure_url'] #save the image url
 
@@ -133,13 +133,13 @@ def organization_detail(request, pk):
 
                 if 'ceo_image' in serializer.validated_data.keys() and serializer.validated_data['ceo_image']:
                     ceo_image = serializer.validated_data['ceo_image'] #get the image file from the request
-                    img2 = cloudinary.uploader.upload(ceo_image, folder = 'fitila/ceo_image/') #upload the image to cloudinary
+                    img2 = cloudinary.uploader.upload(ceo_image, folder = 'edm/ceo_image/') #upload the image to cloudinary
                     serializer.validated_data['ceo_image'] = "" #delete the image file
                     serializer.validated_data['ceo_image_url'] = img2['secure_url'] #save the image url
 
                 if 'company_logo' in serializer.validated_data.keys() and serializer.validated_data['company_logo']:
                     company_logo = serializer.validated_data['company_logo'] #get the image file from the request
-                    img1 = cloudinary.uploader.upload(company_logo, folder = 'fitila/company_logo/') #upload the image to cloudinary
+                    img1 = cloudinary.uploader.upload(company_logo, folder = 'edm/company_logo/') #upload the image to cloudinary
                     serializer.validated_data['company_logo'] = "" #delete the image file
                     serializer.validated_data['company_logo_url'] = img1['secure_url'] #save the image url
             except Exception:
