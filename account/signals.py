@@ -12,13 +12,13 @@ from django.template.loader import render_to_string
 
 totp = pyotp.TOTP('base32secret3232', interval=90)
 
-   
+domain = 'enterprisedatamap.org'
 
 User = get_user_model()
 
 @receiver(reset_password_token_created)
 def password_reset_token_created(sender, instance, reset_password_token, *args, **kwargs):
-    token = "https://www.edm.com/forgot-password/{}".format(reset_password_token.key)
+    token = "https://{}/forgot-password/{}".format(domain,reset_password_token.key)
     
     msg_html = render_to_string('forgot_password.html', {
                         'first_name': str(reset_password_token.user.first_name).title(),

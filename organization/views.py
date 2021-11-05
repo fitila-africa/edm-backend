@@ -712,6 +712,7 @@ def upload_csv(request):
 
             # reader = csv.DictReader(io_string)
             success = False
+            organizations = []
             for row in rows:
                 success = False
                 try:
@@ -719,12 +720,13 @@ def upload_csv(request):
                     row['ecosystem'] = EcoSystem.objects.get(name = str(row['ecosystem']))
                     row['sub_ecosystem'] = SubEcosystem.objects.get(name = str(row['sub_ecosystem']), ecosystem=row['ecosystem'])
 
-                    Organization.objects.create(**row, is_active=True, is_approved=True, responded=True, user=request.user)
+                    organizations.append(Organization(**row, is_active=True, is_approved=True, responded=True, user=request.user))
 
                     success = True
                 except Exception:
                     success = False
             if success == True:
+                Organization.objects.bulk_create(organizations)
                 data = {
                     'status'  : True,
                     'message' : "File upload successful",
