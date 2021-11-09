@@ -261,14 +261,14 @@ SWAGGER_SETTINGS = {
 # emails 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
-EMAIL_HOST = 'smtp.office365.com'
+EMAIL_HOST = 'smtp.mailgun.org'
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 EMAIL_PORT = 465 
 EMAIL_USE_SSL = True    # use port 465
 # EMAIL_USE_TLS = True    # use port 587
 
-DEFAULT_FROM_EMAIL = 'EDM PLATFORM <noreply@ecomap.ng>'
+DEFAULT_FROM_EMAIL = 'EDM PLATFORM <noreply@enterprisedatamap.org>'
 
 
 #caching
