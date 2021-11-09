@@ -10,7 +10,7 @@ from fitila import settings
 from rest_framework import serializers
 from django.template.loader import render_to_string
 
-totp = pyotp.TOTP('base32secret3232', interval=90)
+totp = pyotp.TOTP('base32secret3232', interval=120)
 
 domain = 'enterprisedatamap.org'
 
@@ -30,7 +30,7 @@ def password_reset_token_created(sender, instance, reset_password_token, *args, 
         subject = "RESET PASSWORD FOR EDM PORTAL",
         message= message,
         html_message=msg_html,
-        from_email  = 'EDM SUPPORT <noreply@ecomap.ng>',
+        from_email  = 'EDM SUPPORT <noreply@enterprisedatamap.org>',
         recipient_list= [reset_password_token.user.email]
     )
     
