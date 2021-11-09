@@ -216,7 +216,7 @@ GOOGLE_CLIENT_ID=os.getenv('GOOGLE_CLIENT_ID')
 GOOGLE_CLIENT_SECRET=os.getenv('GOOGLE_SECRET')
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=5),
     'UPDATE_LAST_LOGIN': True,
     'SIGNING_KEY': SECRET_KEY,
