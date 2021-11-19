@@ -15,9 +15,9 @@ from dotenv import load_dotenv
 from datetime import timedelta
 import cloudinary
 
-load_dotenv('/home/fitilla/fitila/fitila/.env')
+#load_dotenv('/home/fitilla/fitila/fitila/.env')
 # load_dotenv()
-# load_dotenv("/home/edm_proj/fitila/fitila/.env")
+load_dotenv("/home/edm_proj/fitila/fitila/.env")
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
