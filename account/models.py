@@ -5,13 +5,14 @@ from django.contrib.auth.models import PermissionsMixin
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.utils.translation import ugettext_lazy as _
 from .managers import UserManager
-
+import uuid
 
 AUTH_PROVIDERS = {'facebook': 'facebook', 
                   'google': 'google',  
                   'email': 'email'}
 
 class User(AbstractBaseUser, PermissionsMixin):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, unique=True,editable=False)
     first_name          = models.CharField(_('first name'),max_length = 250)
     last_name          = models.CharField(_('last name'),max_length = 250)
     email         = models.EmailField(_('email'), unique=True)
