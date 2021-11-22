@@ -298,7 +298,7 @@ def otp_verification(request):
         'password': openapi.Schema(type=openapi.TYPE_STRING, description='string'),
     }
 ))
-@api_view([ 'POST'])
+@api_view(['POST'])
 def user_login(request):
     
     """Allows users to log in to the platform. Sends the jwt refresh and access tokens. Check settings for token life time."""

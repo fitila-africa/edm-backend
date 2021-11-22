@@ -232,6 +232,7 @@ SIMPLE_JWT = {
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
+CSRF_TRUSTED_ORIGINS = ['enterprisedatamap.org']
 # CORS_ALLOWED_ORIGINS = [
 #     'http://localhost:3000',
 #     'https://localhost:3000',
@@ -312,6 +313,7 @@ CSRF_COOKIE_SECURE =  True
 #         },
 #     },
 # }
+
 
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
