@@ -4,7 +4,8 @@ from .models import User, OTP
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
-    list_display = ['first_name', 'last_name', 'email', 'is_active', 'date_joined' ]
+    list_display = ['first_name', 'last_name', 'email', 'is_active', 'is_staff','is_superuser', 'date_joined' ]
+    list_editable = [ 'is_active', 'is_staff','is_superuser', ]
     
     
 admin.site.register(OTP)
