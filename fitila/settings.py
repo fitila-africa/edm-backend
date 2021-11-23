@@ -54,7 +54,7 @@ elif env == 'production':
         
     DEBUG = bool(0)
     
-    ALLOWED_HOSTS = ['api.enterprisedatamap.org']
+    ALLOWED_HOSTS = ['*']
     DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
