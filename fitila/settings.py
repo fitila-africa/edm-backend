@@ -52,7 +52,7 @@ if env == 'staging':
     
 elif env == 'production':
         
-    DEBUG = bool(0)
+    DEBUG = bool(1)
     
     ALLOWED_HOSTS = ['*']
     DATABASES = {
