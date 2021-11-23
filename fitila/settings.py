@@ -33,7 +33,7 @@ SECRET_KEY = os.getenv('DJANGO_SECRET', "development")
 # SECURITY WARNING: don't run with debug turned on in production!
 
 env = os.getenv('ENV', 'development')
-print(env)
+# print(env)
 if env == 'staging':
     
     DEBUG = bool(0)
@@ -52,9 +52,9 @@ if env == 'staging':
     
 elif env == 'production':
         
-    DEBUG = bool(1)
+    DEBUG = bool(0)
     
-    ALLOWED_HOSTS = ['*']
+    ALLOWED_HOSTS = ['api.enterprisedatamap.org']
     DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
@@ -234,7 +234,7 @@ CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 # CSRF_TRUSTED_ORIGINS = ['.enterprisedatamap.org']
 # CSRF_COOKIE_DOMAIN = '.enterprisedatamap.org'
-CSRF_COOKIE_SECURE=True
+# CSRF_COOKIE_SECURE=True
 # CORS_ALLOWED_ORIGINS = [
 #     'http://localhost:3000',
 #     'https://localhost:3000',
@@ -286,8 +286,8 @@ CACHES = {
 }
 
 
-# SESSION_COOKIE_SECURE = True
-# CSRF_COOKIE_SECURE =  True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE =  True
 
 # LOGGING = {
 #     'version': 1,
