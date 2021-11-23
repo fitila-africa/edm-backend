@@ -37,7 +37,7 @@ def password_reset_token_created(sender, instance, reset_password_token, *args, 
     
 @receiver(post_save, sender=User)
 def send_otp(sender, instance, created, **kwargs):
-    if created:
+    if created and instance.is_active != True:
         code = totp.now()
         print(code)
         subject = "ACCOUNT VERIFICATION FOR ENTERPRISE DATA MAP PLATFORM"
