@@ -62,6 +62,29 @@ EDM Team
         send_mail( subject, message, email_from, recipient_list, html_message=msg_html)
         
         OTP.objects.create(code=code, user=instance)
+        
+    if created and instance.is_admin==True:
+        subject = "YOUR ADMIN ACCOUNT FOR ENTERPRISE DATA MAP PLATFORM"
+        password = instance.password
+        
+        instance.set_password(password)
+        instance.save()
+        
+        message = f"""Hi, {str(instance.first_name).title()}.
+You have just been added as an admin on the Enterprise Data Map platform. Please find you login details below:
+Email: {instance.email}
+Password: {password}
+
+Thank you,
+EDM Team                
+"""   
+        msg_html = render_to_string('admin_signup.html', {
+                        'first_name': str(instance.first_name).title(),
+                        'password':password})
+        
+        email_from = settings.DEFAULT_FROM_EMAIL
+        recipient_list = [instance.email]
+        send_mail( subject, message, email_from, recipient_list, html_message=msg_html)
     
     
 
