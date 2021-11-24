@@ -13,7 +13,7 @@ from django.template.loader import render_to_string
 totp = pyotp.TOTP('base32secret3232', interval=120)
 
 domain = 'enterprisedatamap.org'
-
+login_url ='https://enterprisedatamap.org/signin'
 User = get_user_model()
 
 @receiver(reset_password_token_created)
@@ -74,13 +74,17 @@ EDM Team
 You have just been added as an admin on the Enterprise Data Map platform. Please find you login details below:
 Email: {instance.email}
 Password: {password}
+Login here: {login_url}
 
 Thank you,
 EDM Team                
 """   
         msg_html = render_to_string('admin_signup.html', {
                         'first_name': str(instance.first_name).title(),
-                        'password':password})
+                        'email' : instance.email,
+                        'password':password,
+                        'login_url':login_url
+                        })
         
         email_from = settings.DEFAULT_FROM_EMAIL
         recipient_list = [instance.email]
