@@ -33,7 +33,7 @@ SECRET_KEY = os.getenv('DJANGO_SECRET', "development")
 # SECURITY WARNING: don't run with debug turned on in production!
 
 env = os.getenv('ENV', 'development')
-# print(env)
+print(env)
 if env == 'staging':
     
     DEBUG = bool(0)
