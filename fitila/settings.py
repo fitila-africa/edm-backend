@@ -15,9 +15,9 @@ from dotenv import load_dotenv
 from datetime import timedelta
 import cloudinary
 
-#load_dotenv('/home/fitilla/fitila/fitila/.env')
+load_dotenv('/home/fitilla/fitila/fitila/.env')
 # load_dotenv()
-load_dotenv("/home/edm_proj/fitila/fitila/.env")
+# load_dotenv("/home/edm_proj/fitila/fitila/.env")
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -35,9 +35,9 @@ SECRET_KEY = os.getenv('DJANGO_SECRET', "development")
 env = os.getenv('ENV', 'development')
 print(env)
 if env == 'staging':
-    
+
     DEBUG = bool(0)
-    
+
     ALLOWED_HOSTS = ['*']
     DATABASES = {
     'default': {
@@ -49,11 +49,11 @@ if env == 'staging':
         'PORT': "",
         }
     }
-    
+
 elif env == 'production':
-        
+
     DEBUG = bool(0)
-    
+
     ALLOWED_HOSTS = ['api.enterprisedatamap.org']
     DATABASES = {
     'default': {
@@ -65,10 +65,10 @@ elif env == 'production':
         'PORT': "",
         }
     }
-       
-    
+
+
 else:
-    
+
     DEBUG=bool(1)
     ALLOWED_HOSTS=['*']
     DATABASES = {
@@ -101,11 +101,11 @@ INSTALLED_APPS = [
     'django_rest_passwordreset',
     'corsheaders',
     'cloudinary',
-    
+
     #docs
     'drf_yasg',
     'coreapi',
-    
+
 ]
 
 
@@ -224,7 +224,7 @@ SIMPLE_JWT = {
     'AUTH_HEADER_NAME': 'HTTP_AUTHORIZATION',
     'ROTATE_REFRESH_TOKENS': True,
     'BLACKLIST_AFTER_ROTATION': True,
-    
+
 
 }
 
@@ -257,13 +257,13 @@ SWAGGER_SETTINGS = {
     }
 
 
-# emails 
+# emails
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 EMAIL_HOST = 'smtp.mailgun.org'
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
-EMAIL_PORT = 465 
+EMAIL_PORT = 465
 EMAIL_USE_SSL = True    # use port 465
 # EMAIL_USE_TLS = True    # use port 587
 
@@ -289,7 +289,7 @@ CSRF_COOKIE_SECURE =  True
 #     'version': 1,
 #     # Version of logging
 #     'disable_existing_loggers': False,
-#     #disable logging 
+#     #disable logging
 #     # Handlers
 #     'handlers': {
 #         'file': {
