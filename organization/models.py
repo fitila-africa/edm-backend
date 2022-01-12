@@ -107,7 +107,7 @@ class Sector(models.Model):
 
 class Organization(models.Model):
     user                    = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='organizations', null=True)
-    name                    = models.TextField( unique=True)
+    name                    = models.CharField( max_length=255,unique=True)
     company_logo            = models.ImageField(null=True)
     company_logo_url        = models.CharField(max_length=200, null=True)
     num_of_employees        = models.CharField(max_length=100, null=True)
