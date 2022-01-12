@@ -107,16 +107,16 @@ class Sector(models.Model):
 
 class Organization(models.Model):
     user                    = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='organizations', null=True)
-    name                    = models.CharField(max_length=350)
+    name                    = models.CharField(max_length=350, unique=True)
     company_logo            = models.ImageField(null=True)
     company_logo_url        = models.CharField(max_length=200, null=True)
     num_of_employees        = models.CharField(max_length=100, null=True)
     state                   = models.CharField(max_length=150)
     address                 = models.CharField(max_length=250)
-    ecosystem               = models.ForeignKey(EcoSystem, on_delete=models.CASCADE, related_name='organizations', blank =True, null=True)
-    sub_ecosystem           = models.ForeignKey(SubEcosystem, on_delete=models.CASCADE, related_name='organizations', blank =True, null=True)
-    sub_ecosystem_sub_class = models.ForeignKey(SubecosystemSubclass, on_delete=models.CASCADE, related_name='organizations', blank =True, null=True)
-    sector                  = models.ForeignKey(Sector, on_delete=models.CASCADE, related_name='organizations', blank =True, null=True)
+    ecosystem               = models.ManyToManyField(EcoSystem, related_name='organizations', blank =True)
+    sub_ecosystem           = models.ManyToManyField(SubEcosystem, related_name='organizations', blank =True)
+    sub_ecosystem_sub_class = models.ManyToManyField(SubecosystemSubclass, related_name='organizations', blank =True)
+    sector                  = models.ManyToManyField(Sector, related_name='organizations', blank =True)
     business_level          = models.CharField(max_length=200, blank =True, null=True)
     funding                 = models.IntegerField(default=0)
     funding_disbursed_for_support = models.IntegerField(default=0)
@@ -155,21 +155,21 @@ class Organization(models.Model):
         return self.name
 
     @property
-    def sector_name(self):
-        return self.sector.name
+    def sector_detail(self):
+        return self.sector.values()
 
 
     @property
-    def ecosystem_name(self):
-        return self.ecosystem.name
+    def ecosystem_detail(self):
+        return self.ecosystem.values()
 
     @property
-    def sub_ecosystem_name(self):
-        return self.sub_ecosystem.name
+    def sub_ecosystem_detail(self):
+        return self.sub_ecosystem.values()
     
     @property
-    def sub_ecosystem_sub_class_name(self):
-        return self.sub_ecosystem_sub_class.name
+    def sub_ecosystem_sub_class_detail(self):
+        return self.sub_ecosystem_sub_class.values()
     
     @property
     def reason_for_decline(self):
@@ -193,14 +193,10 @@ class Organization(models.Model):
           "num_of_employees": self.num_of_employees,
           "state": self.state,
           "address": self.address,
-          "ecosystem" : self.ecosystem.id if self.ecosystem else "",
-          "ecosystem_name": self.ecosystem_name if self.ecosystem else "",
-          "sub_ecosystem":self.sub_ecosystem.id if self.sub_ecosystem else "",
-          "sub_ecosystem_name": self.sub_ecosystem_name if self.sub_ecosystem else "",
-          "sub_ecosystem_sub_class":self.sub_ecosystem_sub_class.id if self.sub_ecosystem_sub_class else "",
-          "sub_ecosystem_sub_class_name": self.sub_ecosystem_sub_class_name if self.sub_ecosystem_sub_class else "",
-          "sector":self.sector.id if self.sector else "",
-          "sector_name": self.sector_name if self.sector else "",
+          "ecosystem" : self.ecosystem.values(),
+          "sub_ecosystem":self.sub_ecosystem.values(),
+          "sub_ecosystem_sub_class":self.sub_ecosystem_sub_class.values(),
+          "sector":self.sector.values(),
           "business_level": self.business_level,
           "funding": self.funding,
           "funding_disbursed_for_support": self.funding_disbursed_for_support,

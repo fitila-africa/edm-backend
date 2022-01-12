@@ -42,20 +42,36 @@ class FileUploadSerializer(serializers.Serializer):
 
 
 class OrganizationSerializer(serializers.ModelSerializer):
-    sector_name = serializers.ReadOnlyField()
-    ecosystem_name = serializers.ReadOnlyField()
-    sub_ecosystem_name = serializers.ReadOnlyField()
-    sub_ecosystem_sub_class_name = serializers.ReadOnlyField()
+    sector_detail = serializers.ReadOnlyField()
+    ecosystem_detail = serializers.ReadOnlyField()
+    sub_ecosystem_detail = serializers.ReadOnlyField()
+    sub_ecosystem_sub_class_detail = serializers.ReadOnlyField()
     reason_for_decline = serializers.ReadOnlyField()
     
     class Meta:
         model = Organization
-        fields = ['id','user','name','company_logo','company_logo_url', 'num_of_employees','state', 'address','ecosystem', 'ecosystem_name',
-        'sub_ecosystem', 'sub_ecosystem_name',
-        'sub_ecosystem_sub_class', 'sub_ecosystem_sub_class_name', 'sector','sector_name','business_level', 'funding', 'funding_disbursed_for_support','company_valuation', 'num_supported_business', 'ceo_name', 'ceo_image', 'ceo_gender', 'ceo_image_url','website','email',
+        fields = ['id','user','name','company_logo','company_logo_url', 'num_of_employees','state', 'address','ecosystem', 'ecosystem_detail',
+        'sub_ecosystem', 'sub_ecosystem_detail',
+        'sub_ecosystem_sub_class', 'sub_ecosystem_sub_class_detail', 'sector','sector_detail','business_level', 'funding', 'funding_disbursed_for_support','company_valuation', 'num_supported_business', 'ceo_name', 'ceo_image', 'ceo_gender', 'ceo_image_url','website','email',
         'phone','description','head_quarters', 'facebook',  
         'instagram','linkedin', 'twitter', 'url_1','url_2','url_3','cac_doc', 'no_of_jobs','is_entrepreneur','is_ecosystem', 'reason_for_decline','date_created', 'date_updated']
         
+    def create(self, validated_data, user):
+        ecosystem_ = validated_data.pop('ecosystem')
+        sub_ecosystem_ =  validated_data.pop('sub_ecosystem')
+        sub_ecosystem_sub_class_ = validated_data.pop('sub_ecosystem_sub_class')
+        sector_ = validated_data.pop('sector')
+    
+        org = Organization.objects.create(**validated_data, user=user)
+        org.ecosystem.set(ecosystem_)
+        org.sub_ecosystem.set(sub_ecosystem_)
+        org.sub_ecosystem_sub_class.set(sub_ecosystem_sub_class_)
+        org.sector.set(sector_)
+        org.save()
+        
+        return org
+    
+   
     
 class DeclineOrganizationSerializer(serializers.ModelSerializer):
     class Meta:

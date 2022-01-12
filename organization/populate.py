@@ -24,33 +24,33 @@ def populate_ecosystem():
         print('{} Done'.format(i))
 
 
-def populate_organization():
+# def populate_organization():
     
-    """This function is clears all of the organization in the db and populates it with new ones. Only used to populate staging data must not be run in production"""
+#     """This function is clears all of the organization in the db and populates it with new ones. Only used to populate staging data must not be run in production"""
     
-    a = Organization.objects.all()
-    a.delete()
-    print("Cleared former data")
-    print("=================\nWorking on new data\n")
-    import csv
+#     a = Organization.objects.all()
+#     a.delete()
+#     print("Cleared former data")
+#     print("=================\nWorking on new data\n")
+#     import csv
 
-    with open('organization/new_revised_data.csv', mode='r', encoding='UTF-8') as csv_file:
-        csv_reader = csv.DictReader(csv_file)
-        # line_count = 0
-        for row in csv_reader:
-            row['sector'] = Sector.objects.get(name = str(row['sector']))
-            print(row['ecosystem'])
-            row['ecosystem'] = EcoSystem.objects.get(name = str(row['ecosystem']))
+#     with open('organization/new_revised_data.csv', mode='r', encoding='UTF-8') as csv_file:
+#         csv_reader = csv.DictReader(csv_file)
+#         # line_count = 0
+#         for row in csv_reader:
+#             row['sector'] = Sector.objects.get(name = str(row['sector']))
+#             print(row['ecosystem'])
+#             row['ecosystem'] = EcoSystem.objects.get(name = str(row['ecosystem']))
             
-            row['sub_ecosystem'] = SubEcosystem.objects.get(name = str(row['sub_ecosystem']), ecosystem=row['ecosystem'])
+#             row['sub_ecosystem'] = SubEcosystem.objects.get(name = str(row['sub_ecosystem']), ecosystem=row['ecosystem'])
             
-            if row['sub_ecosystem_sub_class']:
-                row['sub_ecosystem_sub_class'] = SubecosystemSubclass.objects.get(name=str(row['sub_ecosystem_sub_class']), sub_ecosystem=row['sub_ecosystem'], ecosystem=row['ecosystem'])
+#             if row['sub_ecosystem_sub_class']:
+#                 row['sub_ecosystem_sub_class'] = SubecosystemSubclass.objects.get(name=str(row['sub_ecosystem_sub_class']), sub_ecosystem=row['sub_ecosystem'], ecosystem=row['ecosystem'])
                 
-            else:
-                s = row.pop('sub_ecosystem_sub_class')
-            Organization.objects.create(**row, is_active=True, responded = True, is_approved=True )
-            print(row['name'], 'Done')
+#             else:
+#                 s = row.pop('sub_ecosystem_sub_class')
+#             Organization.objects.create(**row, is_active=True, responded = True, is_approved=True )
+#             print(row['name'], 'Done')
 
 
 def populate_sub():

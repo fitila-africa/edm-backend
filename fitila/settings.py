@@ -216,7 +216,7 @@ GOOGLE_CLIENT_ID=os.getenv('GOOGLE_CLIENT_ID')
 GOOGLE_CLIENT_SECRET=os.getenv('GOOGLE_SECRET')
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=5),
     'UPDATE_LAST_LOGIN': True,
     'SIGNING_KEY': SECRET_KEY,
@@ -232,14 +232,10 @@ SIMPLE_JWT = {
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
-CSRF_TRUSTED_ORIGINS = ['.enterprisedatamap.org']
-# CSRF_COOKIE_DOMAIN = '.enterprisedatamap.org'
-# CSRF_COOKIE_SECURE=True
-# CORS_ALLOWED_ORIGINS = [
-#     'http://localhost:3000',
-#     'https://localhost:3000',
-#     'https://fitila.vercel.app',
-# ]
+CSRF_TRUSTED_ORIGINS = "*"
+CORS_ALLOWED_ORIGINS = "*"
+
+
 
 #CLOUDINARY FILE UPLOADS
 cloudinary.config(
@@ -262,7 +258,7 @@ SWAGGER_SETTINGS = {
 
 
 # emails 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 EMAIL_HOST = 'smtp.mailgun.org'
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
@@ -278,12 +274,12 @@ DEFAULT_FROM_EMAIL = 'EDM PLATFORM <noreply@enterprisedatamap.org>'
 SESSIONS_ENGINE='django.contrib.sessions.backends.cache'
 
 
-CACHES = {
-   'default': {
-      'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-      'LOCATION': '127.0.0.1:11211',
-   }
-}
+# CACHES = {
+#    'default': {
+#       'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+#       'LOCATION': '127.0.0.1:11211',
+#    }
+# }
 
 
 SESSION_COOKIE_SECURE = True

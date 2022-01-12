@@ -1,6 +1,6 @@
 from django.views.decorators.cache import cache_page
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
-from rest_framework.permissions import NOT, IsAuthenticated, IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework import status
 from .models import DeclineOrganization, EcoSystem, Organization, Sector, SubEcosystem, SubecosystemSubclass
@@ -12,8 +12,13 @@ import cloudinary.uploader
 from drf_yasg.utils import swagger_auto_schema
 from account.send_notice import send_notification
 from .populate import process_data
+from django.contrib.auth import get_user_model
+from rest_framework.exceptions import PermissionDenied
 
-@cache_page(60 * 6)
+User = get_user_model()
+
+
+# @cache_page(60 * 6)
 @swagger_auto_schema(methods=['POST'], request_body=OrganizationSerializer())
 @api_view(['GET', 'POST'])
 @authentication_classes([JWTAuthentication])
@@ -75,7 +80,10 @@ def organizations(request):
                 }
                 return Response(data, status = status.HTTP_400_BAD_REQUEST)
 
-            organization = Organization.objects.create(**serializer.validated_data, user=request.user)
+            if "user" in serializer.validated_data.keys():
+                serializer.validated_data.pop('user')
+                
+            organization = serializer.create(serializer.validated_data, request.user)
             
             send_notification(user=request.user, status='pending')
 
@@ -125,6 +133,9 @@ def organization_detail(request, pk):
 
         return Response(data, status=status.HTTP_200_OK)
 
+    if organization.user != request.user or request.user.is_admin != True:
+        raise PermissionDenied("You do not have the permission to perform this action")
+    
     #Update the item
     elif request.method == 'PUT':
         serializer = OrganizationSerializer(organization, data = request.data, partial=True) #allows you to be able to update one field of the model
@@ -153,17 +164,23 @@ def organization_detail(request, pk):
 
 
             serializer.save()
-            organization.is_approved=False
-            organization.is_declined=False
-            organization.responded=False
-            organization.save()
             
-            if not request.user.is_admin:
+            
+            if request.user.is_admin == True:
+                organization.is_approved=True
+                organization.is_declined=False
+                organization.responded=True
+                organization.save()
+            else:
+                organization.is_approved=False
+                organization.is_declined=False
+                organization.responded=False
+                organization.save()
                 send_notification(request.user, status='updated')
                 
             data = {
                 'status'  : True,
-                'message' : "Your request is pending approval.",
+                'message' : "success",
                 'data' : serializer.data,
             }
 
