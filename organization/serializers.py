@@ -66,7 +66,7 @@ class OrganizationSerializer(serializers.ModelSerializer):
         org.ecosystem.set(ecosystem_)
         org.sub_ecosystem.set(sub_ecosystem_)
         org.sub_ecosystem_sub_class.set(sub_ecosystem_sub_class_)
-        org.sector.set(sector_)
+        org.sector=sector_
         org.save()
         
         return org
