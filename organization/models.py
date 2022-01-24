@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth import get_user_model
-
+from django.forms import model_to_dict
 User = get_user_model()
 
 class EcoSystem(models.Model):
@@ -116,7 +116,7 @@ class Organization(models.Model):
     ecosystem               = models.ManyToManyField(EcoSystem, related_name='organizations', blank =True)
     sub_ecosystem           = models.ManyToManyField(SubEcosystem, related_name='organizations', blank =True)
     sub_ecosystem_sub_class = models.ManyToManyField(SubecosystemSubclass, related_name='organizations', blank =True)
-    sector                  = models.ManyToManyField(Sector, related_name='organizations', blank =True)
+    sector                  = models.ForeignKey(Sector, on_delete=models.CASCADE, related_name='organizations', null=True,blank =True)
     business_level          = models.CharField(max_length=200, blank =True, null=True)
     funding                 = models.IntegerField(default=0)
     funding_disbursed_for_support = models.IntegerField(default=0)
@@ -156,7 +156,7 @@ class Organization(models.Model):
 
     @property
     def sector_detail(self):
-        return self.sector.values()
+        return model_to_dict(self.sector)
 
 
     @property
@@ -196,7 +196,7 @@ class Organization(models.Model):
           "ecosystem" : self.ecosystem.values(),
           "sub_ecosystem":self.sub_ecosystem.values(),
           "sub_ecosystem_sub_class":self.sub_ecosystem_sub_class.values(),
-          "sector":self.sector.values(),
+          "sector": model_to_dict(self.sector),
           "business_level": self.business_level,
           "funding": self.funding,
           "funding_disbursed_for_support": self.funding_disbursed_for_support,
