@@ -144,8 +144,8 @@ class Organization(models.Model):
     is_entrepreneur         = models.BooleanField(default=False)
     is_ecosystem            = models.BooleanField(default=False)
     is_active               = models.BooleanField(default=True)
-    is_approved                = models.BooleanField(default=False)
-    is_declined              = models.BooleanField(default=False)
+    is_approved             = models.BooleanField(default=False)
+    is_declined             = models.BooleanField(default=False)
     responded               = models.BooleanField(default=False)
     date_created            = models.DateTimeField(auto_now_add=True)
     date_updated            = models.DateTimeField(auto_now=True)
@@ -193,10 +193,10 @@ class Organization(models.Model):
           "num_of_employees": self.num_of_employees,
           "state": self.state,
           "address": self.address,
-          "ecosystem" : self.ecosystem.values(),
-          "sub_ecosystem":self.sub_ecosystem.values(),
-          "sub_ecosystem_sub_class":self.sub_ecosystem_sub_class.values(),
-          "sector": model_to_dict(self.sector),
+          "ecosystem" : self.ecosystem.values() if self.ecosystem else "",
+          "sub_ecosystem":self.sub_ecosystem.values() if self.sub_ecosystem else "",
+          "sub_ecosystem_sub_class":self.sub_ecosystem_sub_class.values() if self.sub_ecosystem_sub_class else "",
+          "sector": model_to_dict(self.sector) if self.sector else "",
           "business_level": self.business_level,
           "funding": self.funding,
           "funding_disbursed_for_support": self.funding_disbursed_for_support,
