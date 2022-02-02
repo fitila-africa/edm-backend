@@ -45,40 +45,41 @@ def organizations(request):
         serializer = OrganizationSerializer(data = request.data)
 
         if serializer.is_valid():
-            try:
-                if 'ceo_image' in serializer.validated_data.keys() and serializer.validated_data['ceo_image'] != None:
-                    # upload the ceo's image
-                    ceo_image = serializer.validated_data['ceo_image'] #get the image file from the request
-                    img1 = cloudinary.uploader.upload(ceo_image, folder = 'edm/ceo_image/') #upload the image to cloudinary
-                    serializer.validated_data['ceo_image'] = "" #delete the image file
+            print(serializer.validated_data)
+            # try:
+            #     if 'ceo_image' in serializer.validated_data.keys() and serializer.validated_data['ceo_image'] != None:
+            #         # upload the ceo's image
+            #         ceo_image = serializer.validated_data['ceo_image'] #get the image file from the request
+            #         img1 = cloudinary.uploader.upload(ceo_image, folder = 'edm/ceo_image/') #upload the image to cloudinary
+            #         serializer.validated_data['ceo_image'] = "" #delete the image file
                     
-                    serializer.validated_data['ceo_image_url'] = img1['secure_url'] #save the image url
-                else:
-                    data = {
-                    'status'  : False,
-                    'message' : "Unsuccessful",
-                    'error' : ["CEO's Image is required"],
-                    }
+            #         serializer.validated_data['ceo_image_url'] = img1['secure_url'] #save the image url
+            #     else:
+            #         data = {
+            #         'status'  : False,
+            #         'message' : "Unsuccessful",
+            #         'error' : ["CEO's Image is required"],
+            #         }
 
-                    return Response(data, status = status.HTTP_400_BAD_REQUEST)
+            #         return Response(data, status = status.HTTP_400_BAD_REQUEST)
 
-                if 'company_logo' in serializer.validated_data.keys() and serializer.validated_data['company_logo'] != None:
-                #upload the company's logo
-                    company_logo = serializer.validated_data['company_logo'] #get the image file from the request
-                    img2 = cloudinary.uploader.upload(company_logo, folder = 'edm/company_logo/') #upload the image to cloudinary
-                    serializer.validated_data['company_logo'] = "" #delete the image file
-                    serializer.validated_data['company_logo_url'] = img2['secure_url'] #save the image url
+            #     if 'company_logo' in serializer.validated_data.keys() and serializer.validated_data['company_logo'] != None:
+            #     #upload the company's logo
+            #         company_logo = serializer.validated_data['company_logo'] #get the image file from the request
+            #         img2 = cloudinary.uploader.upload(company_logo, folder = 'edm/company_logo/') #upload the image to cloudinary
+            #         serializer.validated_data['company_logo'] = "" #delete the image file
+            #         serializer.validated_data['company_logo_url'] = img2['secure_url'] #save the image url
 
 
 
-            except Exception as e:
-                print(e)
-                data = {
-                    'status'  : False,
-                    'message' : "Unsuccessful",
-                    'error' : ["Unable to add organization"],
-                }
-                return Response(data, status = status.HTTP_400_BAD_REQUEST)
+            # except Exception as e:
+            #     print(e)
+            #     data = {
+            #         'status'  : False,
+            #         'message' : "Unsuccessful",
+            #         'error' : ["Unable to add organization"],
+            #     }
+            #     return Response(data, status = status.HTTP_400_BAD_REQUEST)
 
             if "user" in serializer.validated_data.keys():
                 serializer.validated_data.pop('user')
