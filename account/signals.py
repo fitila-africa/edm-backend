@@ -1,3 +1,4 @@
+import random
 from account.serializers import UserSerializer
 from django.dispatch import receiver
 from django_rest_passwordreset.signals import reset_password_token_created
@@ -9,8 +10,12 @@ from .models import OTP
 from fitila import settings
 from rest_framework import serializers
 from django.template.loader import render_to_string
+from django.utils import timezone
 
-totp = pyotp.TOTP('base32secret3232', interval=120)
+def get_otp(n):
+    code = "".join([str(random.choice(range(0,10))) for _ in range(n)])
+    expiry_date = timezone.now() + timezone.timedelta(minutes=5)
+    return code, expiry_date
 
 domain = 'enterprisedatamap.org'
 login_url ='https://enterprisedatamap.org/signin'
@@ -38,7 +43,7 @@ def password_reset_token_created(sender, instance, reset_password_token, *args, 
 @receiver(post_save, sender=User)
 def send_otp(sender, instance, created, **kwargs):
     if created and instance.is_active != True:
-        code = totp.now()
+        code, expiry_date = get_otp()
         print(code)
         subject = "ACCOUNT VERIFICATION FOR ENTERPRISE DATA MAP PLATFORM"
         
@@ -61,7 +66,7 @@ EDM Team
         recipient_list = [instance.email]
         send_mail( subject, message, email_from, recipient_list, html_message=msg_html)
         
-        OTP.objects.create(code=code, user=instance)
+        OTP.objects.create(code=code, user=instance, expiry_date=expiry_date)
         
     if created and instance.is_admin==True:
         subject = "YOUR ADMIN ACCOUNT FOR ENTERPRISE DATA MAP PLATFORM"
@@ -107,7 +112,7 @@ class OTPVerifySerializer(serializers.Serializer):
                 OTP.objects.filter(code=otp).delete()
                 raise serializers.ValidationError(detail='Cannot verify otp. Please try later')
             
-            if totp.verify(otp):
+            if otp.is_verified():
                 if otp.user.is_active == False:
                     otp.user.is_active=True
                     otp.user.save()
@@ -140,9 +145,9 @@ class NewOtpSerializer(serializers.Serializer):
         except User.DoesNotExist:
             raise serializers.ValidationError(detail='Please confirm that the email is correct and has not been verified')
         
-        code = totp.now()
-        print(code)
-        OTP.objects.create(code=code, user=user)
+        code, expiry_date = get_otp()
+        # print(code)
+        OTP.objects.create(code=code, user=user, expiry_date=expiry_date)
         subject = "NEW OTP FOR ENTERPRISE DATA MAP PLATFORM"
         
         message = f"""Hi, {str(user.first_name).title()}.

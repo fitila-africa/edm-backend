@@ -6,6 +6,7 @@ from django.contrib.auth.base_user import AbstractBaseUser
 from django.utils.translation import ugettext_lazy as _
 from .managers import UserManager
 import uuid
+from django.utils import timezone
 
 AUTH_PROVIDERS = {'facebook': 'facebook', 
                   'google': 'google',  
@@ -49,8 +50,12 @@ class User(AbstractBaseUser, PermissionsMixin):
 class OTP(models.Model):
     code = models.CharField(max_length=6)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='otps')
+    expiry_date = models.DateTimeField()
     
 
     
     def __str__(self):
         return self.code
+    
+    def is_verified(self):
+        return self.expiry_date > timezone.now()

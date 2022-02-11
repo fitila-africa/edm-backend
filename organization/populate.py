@@ -37,6 +37,7 @@ def populate_organization():
     with open('organization/new_revised_data.csv', mode='r', encoding='UTF-8') as csv_file:
         csv_reader = csv.DictReader(csv_file)
         # line_count = 0
+        orgs = []
         for row in csv_reader:
             row['sector'] = Sector.objects.get(name = str(row['sector']))
             print(row['ecosystem'])
@@ -49,8 +50,11 @@ def populate_organization():
                 
             else:
                 s = row.pop('sub_ecosystem_sub_class')
-            Organization.objects.create(**row, is_active=True, responded = True, is_approved=True )
-            print(row['name'], 'Done')
+            if any(org.name==row['name'] for org in orgs):
+                print(f"Did not add {row['name']}")
+                continue
+            orgs.append(Organization(**row, is_active=True, responded = True, is_approved=True ))
+        
 
 
 def populate_sub():
