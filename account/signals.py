@@ -47,16 +47,16 @@ def send_otp(sender, instance, created, **kwargs):
         print(code)
         subject = "ACCOUNT VERIFICATION FOR ENTERPRISE DATA MAP PLATFORM"
         
-        message = f"""Hi, {str(instance.first_name).title()}.
-Thank you for signing up!
-Complete your verification on the enterprise data map (EMD) portal with the OTP below:
+        message = f"""Welcome, {str(instance.first_name).title()}.
+Thank you for signing up on the Enterprise Data Map Platform. Kindly complete your registration on the Enterprise Data Map with the One-Time Password (OTP) Sent below.
 
-                {code}        
+One-Time Password (OTP) : {code}
+Expires in 5 minutes!
 
-Expires in 60 seconds!
 
-Thank you,
-EDM Team                
+Cheers,
+Enterprise Data Map Team
+                
 """   
         msg_html = render_to_string('signup_email.html', {
                         'first_name': str(instance.first_name).title(),
@@ -150,16 +150,16 @@ class NewOtpSerializer(serializers.Serializer):
         OTP.objects.create(code=code, user=user, expiry_date=expiry_date)
         subject = "NEW OTP FOR ENTERPRISE DATA MAP PLATFORM"
         
-        message = f"""Hi, {str(user.first_name).title()}.
+        message = f"""Welcome, {str(user.first_name).title()}.
+Kindly complete your registration on the Enterprise Data Map with the One-Time Password (OTP) Sent below:
 
-    Complete your verification on the enterprise data map (EMD) portal with the OTP below:
+One-Time Password (OTP) : {code}
 
-                    {code}        
+Expires in 5 minutes!
 
-    Expires in 60 seconds!
-
-    Thank you,
-    EDM Team                
+Cheers,
+Enterprise Data Map Team
+              
     """
         msg_html = render_to_string('new_otp.html', {
                         'first_name': str(user.first_name).title(),
