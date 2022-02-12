@@ -16,6 +16,7 @@ django-debug-toolbar==3.2.2
 django-environ==0.4.5
 django-rest-passwordreset==1.1.0
 djangorestframework==3.11.0
+djangorestframework-jwt==1.11.0
 djangorestframework-simplejwt==4.7.2
 drf-yasg==1.17.1
 facebook-sdk==3.1.0
@@ -65,3 +66,4 @@ social-auth-core==4.1.0
 sqlparse==0.3.1
 uritemplate==3.0.1
 urllib3==1.25.10
+whitenoise==5.2.0
