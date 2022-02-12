@@ -5,8 +5,9 @@ from fitila import settings
 from rest_framework import serializers
 from django.template.loader import render_to_string
 
+User = get_user_model()
 
-def send_notification(user, status, reason=""):
+def send_notification(user:User, status, reason=""):
     if status=='pending':
         
         subject = "YOUR BUSINESS IS PENDING"

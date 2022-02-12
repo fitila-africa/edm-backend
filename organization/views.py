@@ -7,13 +7,14 @@ from .models import DeclineOrganization, EcoSystem, Organization, Sector, SubEco
 from .serializers import DeclineOrganizationSerializer, EcosystemSerializer, FileUploadSerializer, OrganizationSerializer, SectorSerializer, SubecosystemSerializer, SubecosystemSubclassSerializer
 from account.permissions import IsAdminOrReadOnly, IsAdminUser_Custom
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.exceptions import ValidationError
 import cloudinary
 import cloudinary.uploader
 from drf_yasg.utils import swagger_auto_schema
-from account.send_notice import send_notification
+from account.send_notice import User, send_notification
 from .populate import process_data
 
-@cache_page(60 * 6)
+# @cache_page(60 * 6)
 @swagger_auto_schema(methods=['POST'], request_body=OrganizationSerializer())
 @api_view(['GET', 'POST'])
 @authentication_classes([JWTAuthentication])
@@ -686,7 +687,6 @@ def state(request):
 @permission_classes([IsAdminUser_Custom])
 def upload_csv(request):
 
-
     if request.method == 'POST':
 
         serializer = FileUploadSerializer(data = request.data)
@@ -717,10 +717,20 @@ def upload_csv(request):
             for row in rows:
                 success = False
                 try:
+                    if any(org.name == row['name'] for org in organizations) or Organization.objects.filter(name=row['name'], is_active=True).exists():
+                        raise ValidationError(detail= {
+                            'status'  : False,
+                            'message' : "Unsuccessful",
+                            'errors'  : [ f"Error uploading file.\nCannot upload multiple organizations or Organization '{row['name']}' already exists."]
+
+                        })
+                        
                     row['sector'] = Sector.objects.get(name = str(row['sector']))
                     row['ecosystem'] = EcoSystem.objects.get(name = str(row['ecosystem']))
                     row['sub_ecosystem'] = SubEcosystem.objects.get(name = str(row['sub_ecosystem']), ecosystem=row['ecosystem'])
-
+                    
+                    
+                        
                     organizations.append(Organization(**row, is_active=True, is_approved=True, responded=True, user=request.user))
 
                     success = True
