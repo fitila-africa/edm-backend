@@ -50,9 +50,13 @@ if env == 'staging':
     #     }
     # }
     DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': os.getenv('STAGING_DB_NAME'),
+        'USER': os.getenv('STAGING_DB_USER'),
+        'PASSWORD': os.getenv('STAGING_DB_PASSWORD'),
+        'HOST': os.getenv('STAGING_DB_HOST'),
+        'PORT': "",
         }
     }
 elif env == 'production':
