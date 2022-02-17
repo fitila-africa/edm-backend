@@ -54,6 +54,7 @@ def populate_organization():
                 print(f"Did not add {row['name']}")
                 continue
             orgs.append(Organization(**row, is_active=True, responded = True, is_approved=True ))
+    Organization.objects.bulk_create(orgs)
         
 
 

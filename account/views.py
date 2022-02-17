@@ -71,8 +71,8 @@ def add_user(request):
 
 @swagger_auto_schema(methods=['POST'], request_body=UserSerializer())
 @api_view(['POST'])
-# @authentication_classes([JWTAuthentication])
-# @permission_classes([IsAdminUser])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAdminUser])
 def add_admin(request):
     
     """Allows a super admin to create an admin. The superadmin status is defined by an "is_staff" field set in the models."""
