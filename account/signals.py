@@ -1,3 +1,4 @@
+import random
 from account.serializers import UserSerializer
 from django.dispatch import receiver
 from django_rest_passwordreset.signals import reset_password_token_created
@@ -9,8 +10,12 @@ from .models import OTP
 from fitila import settings
 from rest_framework import serializers
 from django.template.loader import render_to_string
+from django.utils import timezone
 
-totp = pyotp.TOTP('base32secret3232', interval=120)
+def get_otp(n):
+    code = "".join([str(random.choice(range(0,10))) for _ in range(n)])
+    expiry_date = timezone.now() + timezone.timedelta(minutes=5)
+    return code, expiry_date
 
 domain = 'enterprisedatamap.org'
 login_url ='https://enterprisedatamap.org/signin'
@@ -38,20 +43,20 @@ def password_reset_token_created(sender, instance, reset_password_token, *args, 
 @receiver(post_save, sender=User)
 def send_otp(sender, instance, created, **kwargs):
     if created and instance.is_active != True:
-        code = totp.now()
+        code, expiry_date = get_otp()
         print(code)
         subject = "ACCOUNT VERIFICATION FOR ENTERPRISE DATA MAP PLATFORM"
         
-        message = f"""Hi, {str(instance.first_name).title()}.
-Thank you for signing up!
-Complete your verification on the enterprise data map (EMD) portal with the OTP below:
+        message = f"""Welcome, {str(instance.first_name).title()}.
+Thank you for signing up on the Enterprise Data Map Platform. Kindly complete your registration on the Enterprise Data Map with the One-Time Password (OTP) Sent below.
 
-                {code}        
+One-Time Password (OTP) : {code}
+Expires in 5 minutes!
 
-Expires in 60 seconds!
 
-Thank you,
-EDM Team                
+Cheers,
+Enterprise Data Map Team
+                
 """   
         msg_html = render_to_string('signup_email.html', {
                         'first_name': str(instance.first_name).title(),
@@ -61,7 +66,7 @@ EDM Team
         recipient_list = [instance.email]
         send_mail( subject, message, email_from, recipient_list, html_message=msg_html)
         
-        OTP.objects.create(code=code, user=instance)
+        OTP.objects.create(code=code, user=instance, expiry_date=expiry_date)
         
     if created and instance.is_admin==True:
         subject = "YOUR ADMIN ACCOUNT FOR ENTERPRISE DATA MAP PLATFORM"
@@ -107,7 +112,7 @@ class OTPVerifySerializer(serializers.Serializer):
                 OTP.objects.filter(code=otp).delete()
                 raise serializers.ValidationError(detail='Cannot verify otp. Please try later')
             
-            if totp.verify(otp):
+            if otp.is_verified():
                 if otp.user.is_active == False:
                     otp.user.is_active=True
                     otp.user.save()
@@ -140,21 +145,21 @@ class NewOtpSerializer(serializers.Serializer):
         except User.DoesNotExist:
             raise serializers.ValidationError(detail='Please confirm that the email is correct and has not been verified')
         
-        code = totp.now()
-        print(code)
-        OTP.objects.create(code=code, user=user)
+        code, expiry_date = get_otp()
+        # print(code)
+        OTP.objects.create(code=code, user=user, expiry_date=expiry_date)
         subject = "NEW OTP FOR ENTERPRISE DATA MAP PLATFORM"
         
-        message = f"""Hi, {str(user.first_name).title()}.
+        message = f"""Welcome, {str(user.first_name).title()}.
+Kindly complete your registration on the Enterprise Data Map with the One-Time Password (OTP) Sent below:
 
-    Complete your verification on the enterprise data map (EMD) portal with the OTP below:
+One-Time Password (OTP) : {code}
 
-                    {code}        
+Expires in 5 minutes!
 
-    Expires in 60 seconds!
-
-    Thank you,
-    EDM Team                
+Cheers,
+Enterprise Data Map Team
+              
     """
         msg_html = render_to_string('new_otp.html', {
                         'first_name': str(user.first_name).title(),

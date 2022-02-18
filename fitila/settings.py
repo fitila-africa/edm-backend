@@ -15,9 +15,9 @@ from dotenv import load_dotenv
 from datetime import timedelta
 import cloudinary
 
-#load_dotenv('/home/fitilla/fitila/fitila/.env')
+load_dotenv("/home/fitila/fitila/.env")
 # load_dotenv()
-load_dotenv("/home/edm_proj/fitila/fitila/.env")
+# load_dotenv("/home/edm_proj/fitila/fitila/.env")
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -39,17 +39,26 @@ if env == 'staging':
     DEBUG = bool(0)
     
     ALLOWED_HOSTS = ['*']
+    # DATABASES = {
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.mysql',
+    #     'NAME': os.getenv('DB_NAME'),
+    #     'USER': os.getenv('DB_USER'),
+    #     'PASSWORD': os.getenv('DB_PASSWORD'),
+    #     'HOST': os.getenv('DB_HOST'),
+    #     'PORT': "",
+    #     }
+    # }
     DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.getenv('DB_NAME'),
-        'USER': os.getenv('DB_USER'),
-        'PASSWORD': os.getenv('DB_PASSWORD'),
-        'HOST': os.getenv('DB_HOST'),
+        'NAME': os.getenv('STAGING_DB_NAME'),
+        'USER': os.getenv('STAGING_DB_USER'),
+        'PASSWORD': os.getenv('STAGING_DB_PASSWORD'),
+        'HOST': os.getenv('STAGING_DB_HOST'),
         'PORT': "",
         }
     }
-    
 elif env == 'production':
         
     DEBUG = bool(0)
@@ -93,6 +102,7 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    # 'whitenoise.runserver_nostatic',
     'django.contrib.staticfiles',
     'debug_toolbar',
     'rest_framework',
@@ -112,6 +122,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    # 'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -194,6 +205,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 # STATICFILES_DIRS = [
 #     os.path.join(BASE_DIR, 'build/static')
 # ]
+# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
@@ -232,14 +244,6 @@ SIMPLE_JWT = {
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
-CSRF_TRUSTED_ORIGINS = ['.enterprisedatamap.org']
-# CSRF_COOKIE_DOMAIN = '.enterprisedatamap.org'
-# CSRF_COOKIE_SECURE=True
-# CORS_ALLOWED_ORIGINS = [
-#     'http://localhost:3000',
-#     'https://localhost:3000',
-#     'https://fitila.vercel.app',
-# ]
 
 #CLOUDINARY FILE UPLOADS
 cloudinary.config(
@@ -334,4 +338,3 @@ sentry_sdk.init(
     send_default_pii=True
 )
 
-from django.middleware.csrf import CsrfViewMiddleware
