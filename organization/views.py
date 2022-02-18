@@ -1,20 +1,24 @@
 from django.views.decorators.cache import cache_page
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
-from rest_framework.permissions import NOT, IsAuthenticated, IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework import status
 from .models import DeclineOrganization, EcoSystem, Organization, Sector, SubEcosystem, SubecosystemSubclass
 from .serializers import DeclineOrganizationSerializer, EcosystemSerializer, FileUploadSerializer, OrganizationSerializer, SectorSerializer, SubecosystemSerializer, SubecosystemSubclassSerializer
 from account.permissions import IsAdminOrReadOnly, IsAdminUser_Custom
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from rest_framework.exceptions import ValidationError
+from rest_framework.exceptions import ValidationError, PermissionDenied
 import cloudinary
 import cloudinary.uploader
 from drf_yasg.utils import swagger_auto_schema
 from account.send_notice import User, send_notification
 from .populate import process_data
 
-# @cache_page(60 * 6)
+
+
+SAFE_METHODS = ('GET', 'HEAD', 'OPTIONS')
+
+
 @swagger_auto_schema(methods=['POST'], request_body=OrganizationSerializer())
 @api_view(['GET', 'POST'])
 @authentication_classes([JWTAuthentication])
@@ -114,7 +118,10 @@ def organization_detail(request, pk):
             }
 
         return Response(data, status=status.HTTP_404_NOT_FOUND)
-
+    
+    if request.method not in SAFE_METHODS and (organization.user != request.user or request.user.is_admin != True):
+        raise PermissionDenied("You do not have the permission to perform this action")
+    
     if request.method == 'GET':
         serializer = OrganizationSerializer(organization)
 
@@ -154,12 +161,17 @@ def organization_detail(request, pk):
 
 
             serializer.save()
-            organization.is_approved=False
-            organization.is_declined=False
-            organization.responded=False
-            organization.save()
             
-            if not request.user.is_admin:
+            if request.user.is_admin:
+                organization.is_approved=True
+                organization.is_declined=False
+                organization.responded=True
+                organization.save()
+            else:
+                organization.is_approved=False
+                organization.is_declined=False
+                organization.responded=False
+                organization.save()
                 send_notification(request.user, status='updated')
                 
             data = {
