@@ -43,8 +43,8 @@ def password_reset_token_created(sender, instance, reset_password_token, *args, 
 @receiver(post_save, sender=User)
 def send_otp(sender, instance, created, **kwargs):
     if created and instance.is_active != True:
-        code, expiry_date = get_otp()
-        print(code)
+        code, expiry_date = get_otp(6)
+        # print(code)
         subject = "ACCOUNT VERIFICATION FOR ENTERPRISE DATA MAP PLATFORM"
         
         message = f"""Welcome, {str(instance.first_name).title()}.
@@ -145,7 +145,7 @@ class NewOtpSerializer(serializers.Serializer):
         except User.DoesNotExist:
             raise serializers.ValidationError(detail='Please confirm that the email is correct and has not been verified')
         
-        code, expiry_date = get_otp()
+        code, expiry_date = get_otp(6)
         # print(code)
         OTP.objects.create(code=code, user=user, expiry_date=expiry_date)
         subject = "NEW OTP FOR ENTERPRISE DATA MAP PLATFORM"
