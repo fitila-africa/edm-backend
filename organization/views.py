@@ -119,9 +119,6 @@ def organization_detail(request, pk):
 
         return Response(data, status=status.HTTP_404_NOT_FOUND)
     
-    if request.method not in SAFE_METHODS and (organization.user != request.user or request.user.is_admin != True):
-        raise PermissionDenied("You do not have the permission to perform this action")
-    
     if request.method == 'GET':
         serializer = OrganizationSerializer(organization)
 
@@ -132,9 +129,12 @@ def organization_detail(request, pk):
             }
 
         return Response(data, status=status.HTTP_200_OK)
-
+        
+    if organization.user != request.user or request.user.is_admin != True:
+        raise PermissionDenied("You do not have the permission to perform this action")
+    
     #Update the item
-    elif request.method == 'PUT':
+    if request.method == 'PUT':
         serializer = OrganizationSerializer(organization, data = request.data, partial=True) #allows you to be able to update one field of the model
 
         if serializer.is_valid():
