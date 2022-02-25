@@ -119,7 +119,7 @@ def organization_detail(request, pk):
 
         return Response(data, status=status.HTTP_404_NOT_FOUND)
     
-    if request.method not in SAFE_METHODS and (organization.user != request.user or request.user.is_admin != True):
+    if request.method not in SAFE_METHODS and (organization.user != request.user and request.user.is_admin != True):
         raise PermissionDenied("You do not have the permission to perform this action")
     
     if request.method == 'GET':
