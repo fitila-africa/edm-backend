@@ -79,10 +79,12 @@ def organizations(request):
                     'error' : ["Unable to add organization"],
                 }
                 return Response(data, status = status.HTTP_400_BAD_REQUEST)
-
-            organization = Organization.objects.create(**serializer.validated_data, user=request.user)
+            if request.is_admin == True:
+                organization = Organization.objects.create(**serializer.validated_data, user=request.user, is_approved=True, responded=True)
+            else:
+                organization = Organization.objects.create(**serializer.validated_data, user=request.user)
             
-            send_notification(user=request.user, status='pending')
+                send_notification(user=request.user, status='pending')
 
             serializer = OrganizationSerializer(organization)
             data = {
