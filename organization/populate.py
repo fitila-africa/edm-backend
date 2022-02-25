@@ -1,3 +1,4 @@
+from account.send_notice import User
 from .models import EcoSystem, Organization, Sector, SubEcosystem, SubecosystemSubclass
 import pandas as pd
 
@@ -30,10 +31,11 @@ def populate_organization():
     
     a = Organization.objects.all()
     a.delete()
+    
     print("Cleared former data")
     print("=================\nWorking on new data\n")
     import csv
-
+    user = User.objects.last()
     with open('organization/new_revised_data.csv', mode='r', encoding='UTF-8') as csv_file:
         csv_reader = csv.DictReader(csv_file)
         # line_count = 0
@@ -53,7 +55,7 @@ def populate_organization():
             if any(org.name==row['name'] for org in orgs):
                 print(f"Did not add {row['name']}")
                 continue
-            orgs.append(Organization(**row, is_active=True, responded = True, is_approved=True ))
+            orgs.append(Organization(**row, is_active=True, responded = True, is_approved=True, user=user))
     Organization.objects.bulk_create(orgs)
         
 
