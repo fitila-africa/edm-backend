@@ -35,7 +35,7 @@ def populate_organization():
     print("Cleared former data")
     print("=================\nWorking on new data\n")
     import csv
-    user = User.objects.last()
+    user = User.objects.first()
     with open('organization/new_revised_data.csv', mode='r', encoding='UTF-8') as csv_file:
         csv_reader = csv.DictReader(csv_file)
         # line_count = 0
